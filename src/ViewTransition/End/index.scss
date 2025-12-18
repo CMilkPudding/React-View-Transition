@@ -1,0 +1,61 @@
+.mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .55);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 40px;
+  z-index: 999;
+
+  .content {
+    --origin-width: 100px;
+    --origin-height: 100px;
+    --tX: 0px;
+    --tY: 0px;
+    --target-width: 0px;
+    --target-height: 0px;
+
+    position: fixed;
+    top: 20%;
+    left: 30%;
+    right: 30%;
+    border-radius: 5px;
+    transition: all 0.5s ease;
+    z-index: 2;
+    overflow: hidden;
+    opacity: 0;
+  }
+}
+
+@keyframes fade_show {
+  from {
+    width: var(--origin-width, 50px);
+    height: var(--origin-height, 50px);
+    transform: translate(var(--tX), var(--tY));
+    opacity: 0;
+  }
+
+  to {
+    width: var(--target-width, 100px);
+    height: var(--target-height, 100px);
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade_hide {
+  from {
+    width: var(--target-width, 100px);
+    height: var(--target-height, 100px);
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+
+  to {
+    width: var(--origin-width, 50px);
+    height: var(--origin-height, 50px);
+    transform: translate(var(--tX), var(--tY));
+    opacity: 0;
+  }
+}
