@@ -68,7 +68,6 @@ export default function ViewTransitionEnd({
       onClick={close}
     >
       <div className="view-transition-bg" />
-      <div>sdfjisdjfosdjfo</div>
       <div
         ref={contentRef}
         className={`view-transition-content ${contentClassName}`}
