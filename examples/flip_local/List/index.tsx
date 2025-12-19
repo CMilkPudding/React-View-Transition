@@ -1,15 +1,15 @@
-import { useNavigate, Outlet } from "react-router";
-import './index.scss'
+import { useNavigate, Outlet } from "react-router"
+import { useState } from "react"
+import { ViewTransitionStart, type CaptureMode } from "react-view-transition-flip"
 import { type IItem, items } from '../data'
-import { ViewTransionStart } from "@/components/ViewTransition";
-import { useState } from "react";
+import './index.scss'
 
 export default function Page() {
     const navigate = useNavigate()
-    const [mode, setMode] = useState('observe')
+    const [mode, setMode] = useState<CaptureMode>('observe')
     const [ value, setValue ] = useState("");
 
-    const onClick = (item: IItem) => {
+    const handleItemClick = (item: IItem) => {
         navigate(`${item.id}`) // 相对跳转
     }
     const onClickBtn = () => {
@@ -30,7 +30,7 @@ export default function Page() {
             <div className="wrapper" >
                 {
                     items.map((item, i) => (
-                        <ViewTransionStart className="item" key={i} id={i} onClick={e => onClick(item, e)} mode={mode} duration={2000}>
+                        <ViewTransitionStart className="item" key={i} id={item.id} onClick={() => handleItemClick(item)} mode={mode}>
                             {/* <img src={item.src} /> */}
 
                             {/* 注：这里仅用于测试使用 */}
@@ -38,7 +38,7 @@ export default function Page() {
                                 <img src={item.src} />
                                 <div style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}>{i}</div>
                             </div>
-                        </ViewTransionStart>
+                        </ViewTransitionStart>
                     ))
                 }
             </div>

@@ -4,11 +4,11 @@ import { createBrowserRouter } from 'react-router'
 const router = createBrowserRouter([
     {
         path: '/',
-        Component: lazy(() => import('@/pages/flip_v7/List/index.tsx')),
+        Component: lazy(() => import('../flip_local/List')),
         children: [
             {
                 path: ':id',
-                Component: lazy(() => import('@/pages/flip_v7/Detail/index.tsx'))
+                Component: lazy(() => import('../flip_local/Detail'))
             },
         ]
     }

@@ -1,22 +1,25 @@
 import { useParams, useNavigate } from "react-router"
+import { ViewTransitionEnd } from "react-view-transition-flip"
 import { items } from "../data"
 import "./index.scss"
-// import { ViewTransionDetail } from '@/components/ViewTransion/index.tsx'
-import { ViewTransionEnd } from "@/components/ViewTransition";
 
 export default function Detail() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const item = items.find(i => i.id == id)
+  const item = items.find(i => String(i.id) === id)
 
   const close = () => {
     navigate(-1)
   }
 
+  if (!item) {
+    return <div>Item not found</div>
+  }
+
   return (
-    <ViewTransionEnd id={id} onClose={close} duration={500}>
+    <ViewTransitionEnd id={id!} onClose={close} duration={500}>
       <div className="main-box">
-        <img src={item.src} />
+        <img src={item.src} alt={item.desc} />
         {
           // <div className="content-box">
           //   <div><h2>这是图片标题</h2></div>
@@ -24,6 +27,6 @@ export default function Detail() {
           // </div>
         }
       </div>
-    </ViewTransionEnd>
+    </ViewTransitionEnd>
   )
 }

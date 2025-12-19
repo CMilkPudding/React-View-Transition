@@ -1,23 +1,44 @@
 {
-  "name": "flip-demo",
-  "private": true,
-  "version": "0.0.0",
+  "name": "react-view-transition-flip",
+  "version": "1.0.0",
+  "description": "React FLIP animation components for smooth view transitions",
   "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./style.css": "./dist/style.css"
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "sideEffects": [
+    "*.css",
+    "*.scss"
+  ],
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsup && tsc --project tsconfig.build.json && node scripts/post-build.js",
+    "build:examples": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prepublishOnly": "npm run build"
   },
-  "dependencies": {
-    "animate.css": "^4.1.1",
-    "lodash-es": "^4.17.21",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "react-router": "^7.10.0",
-    "sass": "^1.94.2",
-    "sass-loader": "^16.0.6",
-    "uuid": "^13.0.0"
+  "peerDependencies": {
+    "react": ">=17.0.0",
+    "react-dom": ">=17.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
@@ -25,12 +46,33 @@
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
+    "esbuild-sass-plugin": "^3.3.1",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router": "^7.10.0",
+    "sass": "^1.94.2",
+    "tsup": "^8.3.0",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
     "vite": "^7.2.4"
-  }
+  },
+  "keywords": [
+    "react",
+    "flip",
+    "animation",
+    "view-transition",
+    "transition",
+    "animate"
+  ],
+  "author": "Bobo",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/react-view-transition-flip"
+  },
+  "homepage": "https://github.com/your-username/react-view-transition-flip#readme"
 }
