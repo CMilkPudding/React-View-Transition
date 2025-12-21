@@ -1,6 +1,6 @@
 {
   "name": "react-view-transition-flip",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "React FLIP animation components for smooth view transitions",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -72,7 +72,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/react-view-transition-flip"
+    "url": "https://github.com/CMilkPudding/React-View-Transition"
   },
-  "homepage": "https://github.com/your-username/react-view-transition-flip#readme"
+  "homepage": "https://github.com/CMilkPudding/React-View-Transition#readme"
 }
