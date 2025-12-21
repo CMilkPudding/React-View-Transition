@@ -17,7 +17,11 @@ export default defineConfig({
   treeshake: true,
   external: ['react', 'react-dom'],
   injectStyle: true, // 将样式内联到 JS 中
-  esbuildPlugins: [sassPlugin()],
+  esbuildPlugins: [
+    sassPlugin({
+      type: 'css-text', // 关键配置：将 SCSS 编译为 CSS 文本，让 tsup 的 injectStyle 能够处理
+    })
+  ],
   esbuildOptions(options: any) {
     options.jsx = 'automatic'
   },

@@ -25,7 +25,8 @@
     "noUncheckedSideEffectImports": true,
     "baseUrl": ".",
     "paths": {
-      "react-view-transition-flip": ["src/index.ts"]
+      "react-view-transition-flip": ["src/index.ts"],
+      "react-view-transition-flip_dist": ["dist/index.d.ts"]
     }
   },
   "include": ["src", "examples"]

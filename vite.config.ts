@@ -7,7 +7,8 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      'react-view-transition-flip': path.resolve(__dirname, 'src')
+      'react-view-transition-flip': path.resolve(__dirname, 'src'),
+      'react-view-transition-flip_dist': path.resolve(__dirname, 'dist')
     }
   }
 })
