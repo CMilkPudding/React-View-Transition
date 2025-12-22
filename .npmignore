@@ -8,3 +8,4 @@ index.html
 public/
 eslint.config.js
 *.tgz
+.storybook
