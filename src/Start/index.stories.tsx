@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import ViewTransitionStart from './index'
 
 const meta = {
-    title: 'Example/ViewTransitionStart',
+    title: 'Components/ViewTransitionStart',
     component: ViewTransitionStart,
     args: {
         id: 101,

@@ -8,8 +8,10 @@ export interface ViewTransitionEndProps {
   children: ReactElement
   /** 唯一标识，与 ViewTransitionStart 的 id 对应 */
   id: string | number
-  /** 动画持续时间(ms) */
+  /** 开始动画持续时间(ms) */
   duration?: number
+  /** 结束动画持续时间(ms) */
+  endDuration?: number
   /** 关闭回调 */
   onClose?: () => void
   /** 显示完成回调 */
@@ -32,6 +34,7 @@ export default function ViewTransitionEnd({
   children,
   onShow,
   duration = DEFAULT_ANIMATE_DURATION,
+  endDuration = DEFAULT_ANIMATE_DURATION,
   maskClassName = '',
   maskStyle,
   contentClassName = '',
@@ -54,7 +57,7 @@ export default function ViewTransitionEnd({
     // 捕获详情位置 → 准备做反向动画
     play(id, contentRef.current, () => {
       onClose?.()
-    }, true, duration)
+    }, true, endDuration)
   }
 
   const handleContentClick = (e: MouseEvent<HTMLDivElement>) => {
