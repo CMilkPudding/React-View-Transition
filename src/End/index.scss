@@ -1,19 +1,3 @@
-.view-transition-mask {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding-top: 40px;
-  z-index: 999;
-}
-
-.view-transition-bg {
-  position: absolute;
-  inset: 0;
-}
-
 .view-transition-content {
   --origin-width: 100px;
   --origin-height: 100px;
@@ -22,15 +6,8 @@
   --target-width: 0px;
   --target-height: 0px;
 
+  // ?? fixed时，关闭动画才正确
   position: fixed;
-  top: 20%;
-  left: 30%;
-  right: 30%;
-  border-radius: 5px;
-  transition: all 0.5s ease;
-  z-index: 2;
-  overflow: hidden;
-  opacity: 0;
 }
 
 @keyframes fade_show {

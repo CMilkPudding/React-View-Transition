@@ -47,6 +47,8 @@ export function clearCache(key?: string | number): void {
   setCache(cache)
 }
 
+
+
 /**
  * 捕获元素位置信息
  * @param key - 唯一标识
@@ -91,6 +93,8 @@ export function play(
 
   if (!el) return
 
+
+
   // 将目标元素透明度设置为0，避免初始闪烁
   el.style.setProperty('opacity', '0')
 
@@ -99,6 +103,8 @@ export function play(
     dx: first.left - last.x,
     dy: first.top - last.y
   }
+
+    console.log('key---', key, 'first', first, 'last', last, 'dxy', dXY)
 
   el.style.setProperty("--origin-width", first.width + 'px');
   el.style.setProperty("--origin-height", first.height + 'px');
@@ -110,10 +116,10 @@ export function play(
 
 
   // 反向动画
-  if(isReverse) {
-    el.style.animation = `fade_hide ${ duration }ms forwards`;
+  if (isReverse) {
+    el.style.animation = `fade_hide ${duration}ms forwards`;
   } else {
-    el.style.animation = `fade_show ${ duration }ms forwards`
+    el.style.animation = `fade_show ${duration}ms forwards`
   }
 
   // 动画结束回调
@@ -121,4 +127,106 @@ export function play(
     clearTimeout(timer)
     cbAni?.()
   }, duration)
+}
+
+export default class FlipInstance {
+  capture(key: string | number, el: HTMLElement | null): void {
+    if (!el) return
+
+    const cache = getCache()
+    cache[key] = el.getBoundingClientRect()
+    setCache(cache)
+  }
+  play(
+    key: string | number,
+    el: HTMLElement | null,
+    cbAni?: AnimationCallback,
+    isReverse = false,
+    duration = DEFAULT_ANIMATE_DURATION
+  ): void {
+    const cache = getCache()
+    const first = cache[key]
+
+    // 初始和结束位置元素均不存在时，不处理任何操作
+    if (!first && !el) return
+
+    // 开始位置元素不存在时，可能通过URL直接访问或其他别的方式，此时不显示动画，直接显示当前元素
+    if (!first && el) {
+      el.style.setProperty('opacity', '1')
+      return
+    }
+
+    if (!el) return
+
+    // 将目标元素透明度设置为0，避免初始闪烁
+    el.style.setProperty('opacity', '0')
+
+    const last = el.getBoundingClientRect()
+    const dXY = {
+      dx: first.left - last.x,
+      dy: first.top - last.y
+    }
+
+    el.style.setProperty("--origin-width", first.width + 'px');
+    el.style.setProperty("--origin-height", first.height + 'px');
+    el.style.setProperty("--target-width", last.width + 'px');
+    el.style.setProperty("--target-height", last.height + 'px');
+
+    el.style.setProperty("--tX", dXY.dx + 'px');
+    el.style.setProperty("--tY", dXY.dy + 'px');
+
+    let ani: any = null
+    // 反向动画
+    if (isReverse) {
+      // el.style.animation = `fade_hide ${duration}ms forwards`;
+
+      ani = el.animate([
+        {
+          width: last.width + 'px',
+          height: last.height + 'px',
+          transform: `translate(0, 0)`,
+          opacity: 1,
+        },
+        {
+          width: first.width + 'px',
+          height: first.height + 'px',
+          transform: `translate(${dXY.dx}px, ${dXY.dy}px)`,
+          opacity: 0,
+        },
+      ], { duration, fill: 'forwards', })
+    } else {
+      // el.style.animation = `fade_show ${duration}ms forwards`
+
+      ani = el.animate([
+        {
+          width: first.width + 'px',
+          height: first.height + 'px',
+          transform: `translate(${dXY.dx}px, ${dXY.dy}px)`,
+          opacity: 1,
+        },
+        {
+          width: last.width + 'px',
+          height: last.height + 'px',
+          transform: `translate(0, 0)`,
+          opacity: 1,
+        },
+      ], { duration, fill: 'forwards', })
+
+
+    }
+
+    if (ani && ani.onfinish) {
+      // 优化：采用动画结束回调清除元素，而非计时器，计时器快速点击导致问题，且计时不准确
+      ani.onfinish = () => {
+        console.log('动画结束！')
+        cbAni?.()
+      }
+    }
+
+    // 动画结束回调
+    const timer = setTimeout(() => {
+      clearTimeout(timer)
+      cbAni?.()
+    }, duration)
+  }
 }

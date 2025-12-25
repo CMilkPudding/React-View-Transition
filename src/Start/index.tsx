@@ -1,9 +1,9 @@
 import type { ReactElement, MouseEvent } from 'react'
-import { useEffect, useRef, Children } from 'react'
-import { capture } from '../flip'
+import { useEffect, useRef, Children, useLayoutEffect, isValidElement, cloneElement } from 'react'
+// import { capture } from '../flip'
+import FlipInstance from '../flip'
 import { validateId } from '../utils'
-
-export type CaptureMode = 'click' | 'observe'
+import type { CaptureMode } from 'src/types'
 
 export interface ViewTransitionStartProps {
   /** 子元素，仅支持单个根元素 */
@@ -14,26 +14,22 @@ export interface ViewTransitionStartProps {
   mode?: CaptureMode
   /** 点击回调 */
   onClick?: (e: MouseEvent<HTMLDivElement>) => void
-  /** 自定义 className */
-  className?: string
-  /** 自定义 style */
-  style?: React.CSSProperties
 }
 
 export default function ViewTransitionStart({
   children,
   id,
   mode = 'click',
-  className,
-  style,
   ...restProps
 }: ViewTransitionStartProps) {
   const elRef = useRef<HTMLDivElement>(null)
 
+  const { capture } = new FlipInstance()
+
   // 判断元素是否仅一个根元素，否则抛出异常
   Children.only(children)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const el = elRef.current
     if (!el) return;
 
@@ -83,30 +79,29 @@ export default function ViewTransitionStart({
     }
   }, [mode, id])
 
-  // 点击处理
-  const handleClick = (e: MouseEvent<HTMLDivElement>) => {
-    if (!restProps.onClick) return
+  // 克隆 child 并注入 ref
+  const childWithRef = isValidElement(children)
+    ? cloneElement(children, { 
+      ref: elRef,
+      onClick: (e: MouseEvent<HTMLElement>) => {
+        console.log('inner click')
+        // 1. 先执行自己的处理逻辑
+        // click 模式下始终捕获位置
+        if (mode === 'click') {
+          validateId(id)
+          capture(id, e.currentTarget)
+        }
+        
+        // 2. 再调用 children 原本的 onClick（如果有）
+        if (children?.props?.onClick) {
+          children.props.onClick?.(e)
+        }
+        
+        // 3. 也可以调用外部传入的 onClick
+        restProps.onClick?.(e)
+      }
+    })
+    : children
 
-    if (mode !== 'click') {
-      restProps?.onClick(e)
-      return
-    }
-
-    validateId(id)
-
-    capture(id, e.currentTarget)
-    restProps?.onClick(e)
-  }
-
-  return (
-    <div
-      ref={elRef}
-      className={className}
-      style={{ position: 'relative', ...style }}
-      {...restProps}
-      onClick={handleClick}
-    >
-      {children}
-    </div>
-  )
+  return childWithRef  // 直接返回，不需要包裹 div
 }

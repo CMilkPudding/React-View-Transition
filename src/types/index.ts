@@ -1,0 +1,1 @@
+export type CaptureMode = 'click' | 'observe'
