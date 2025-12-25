@@ -32,14 +32,6 @@ export default function Page() {
                         <div className='title'>这是标题</div>
                     </ViewTransitionStartItem>
                 </ViewTransitionStartGroup>
-
-                {/* TODO 多个相同图片时，样式被覆盖问题 */}
-                {/* <ViewTransitionStart id={id} mode='click' onClick={() => { console.log('out click') }}>
-                    <img src={src} />
-                </ViewTransitionStart>
-                <ViewTransitionStart id={`title-${id}`} mode='click'>
-                    <div className='title'>这是标题</div>
-                </ViewTransitionStart> */}
             </div>
         </div>
 
@@ -48,15 +40,15 @@ export default function Page() {
                 <div className='content-wrapper'>
                     <ViewTransitionEndGroup
                         ref={transitionEndGroupRef}
-                        duration={3000}
-                        endDuration={3000}
-                        onClosed={() => setShow(true)}
+                        duration={800}
+                        endDuration={800}
+                        onClosed={() => setShow(false)}
                     >
                         <ViewTransitionEndItem id={id}>
                             <img src={src} />
                         </ViewTransitionEndItem>
                         <ViewTransitionEndItem id={`title-${id}`}>
-                            <div className='title'>这是标题</div>
+                            <h1 className='title'>这是标题</h1>
                         </ViewTransitionEndItem>
                     </ViewTransitionEndGroup>
                 </div>
