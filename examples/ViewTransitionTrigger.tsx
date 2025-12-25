@@ -23,7 +23,7 @@ export default function Page() {
     }
     return <>
         <div className="wrapper">
-            <div className='item' onClick={() => setShow(true)}>
+            <div className='item'>
                 <ViewTransitionStartGroup mode="click" onClick={() => setShow(true)}>
                     <ViewTransitionStartItem id={id}>
                         <img src={src} />
@@ -48,9 +48,9 @@ export default function Page() {
                 <div className='content-wrapper'>
                     <ViewTransitionEndGroup
                         ref={transitionEndGroupRef}
-                        duration={5000}
-                        endDuration={5000}
-                        onClosed={() => setShow(false)}
+                        duration={3000}
+                        endDuration={3000}
+                        onClosed={() => setShow(true)}
                         isHide={!show}
                     >
                         <ViewTransitionEndItem id={id}>
