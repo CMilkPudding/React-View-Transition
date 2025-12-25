@@ -1,15 +1,3 @@
-.view-transition-content {
-  --origin-width: 100px;
-  --origin-height: 100px;
-  --tX: 0px;
-  --tY: 0px;
-  --target-width: 0px;
-  --target-height: 0px;
-
-  // ?? fixed时，关闭动画才正确
-  position: fixed;
-}
-
 @keyframes fade_show {
   from {
     width: var(--origin-width, 50px);

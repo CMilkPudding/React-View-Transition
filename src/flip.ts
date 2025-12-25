@@ -55,11 +55,15 @@ export function clearCache(key?: string | number): void {
  * @param el - 目标元素
  */
 export function capture(key: string | number, el: HTMLElement | null): void {
+  console.log('capture--', key, el)
   if (!el) return
+
+  console.log('capture-- success', key, el.getBoundingClientRect())
 
   const cache = getCache()
   cache[key] = el.getBoundingClientRect()
   setCache(cache)
+
 }
 
 export type AnimationCallback = () => void
