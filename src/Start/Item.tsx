@@ -1,13 +1,9 @@
 import type { ReactElement, MouseEvent, Ref } from 'react'
 import { useEffect, useRef, Children, useLayoutEffect, isValidElement, cloneElement, useCallback } from 'react'
-import FlipInstance from '../flip'
 import { capture } from '../flip'
 import { validateId } from '../utils'
 import { useViewTransitionStartGroup } from './context'
 import type { CaptureMode } from '../types'
-
-// // 单例 FlipInstance，避免每次渲染创建新实例
-// const { capture } = new FlipInstance()
 
 interface ChildProps {
   ref?: Ref<HTMLElement>

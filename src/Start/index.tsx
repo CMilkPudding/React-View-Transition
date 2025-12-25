@@ -1,7 +1,6 @@
 import type { ReactElement, MouseEvent } from 'react'
 import { useEffect, useRef, Children, useLayoutEffect, isValidElement, cloneElement } from 'react'
-// import { capture } from '../flip'
-import FlipInstance from '../flip'
+import { capture } from '../flip'
 import { validateId } from '../utils'
 import type { CaptureMode } from 'src/types'
 
@@ -23,8 +22,6 @@ export default function ViewTransitionStart({
   ...restProps
 }: ViewTransitionStartProps) {
   const elRef = useRef<HTMLDivElement>(null)
-
-  const { capture } = new FlipInstance()
 
   // 判断元素是否仅一个根元素，否则抛出异常
   Children.only(children)

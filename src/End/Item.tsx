@@ -1,11 +1,7 @@
 import type { ReactElement, Ref } from 'react'
 import { useEffect, useRef, useCallback, Children, isValidElement, cloneElement } from 'react'
-// import FlipInstance, { DEFAULT_ANIMATE_DURATION } from '../flip'
 import { play, DEFAULT_ANIMATE_DURATION } from '../flip'
 import { useViewTransitionEndGroup } from './context'
-
-// 单例 FlipInstance，避免每次渲染创建新实例
-// const { play } = new FlipInstance()
 
 interface ChildProps {
   ref?: Ref<HTMLElement>

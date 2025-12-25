@@ -9,7 +9,7 @@ import { useRef, useState } from 'react'
 import './ViewTransitionTrigger.scss'
 
 const data = {
-    id: 105,
+    id: 106,
     src: `https://picsum.photos/seed/${Math.random()}/200/200`,
 }
 
@@ -33,7 +33,7 @@ export default function Page() {
                     </ViewTransitionStartItem>
                 </ViewTransitionStartGroup>
 
-                 {/* TODO 多个相同图片时，样式被覆盖问题 */}
+                {/* TODO 多个相同图片时，样式被覆盖问题 */}
                 {/* <ViewTransitionStart id={id} mode='click' onClick={() => { console.log('out click') }}>
                     <img src={src} />
                 </ViewTransitionStart>
@@ -51,13 +51,12 @@ export default function Page() {
                         duration={3000}
                         endDuration={3000}
                         onClosed={() => setShow(true)}
-                        isHide={!show}
                     >
                         <ViewTransitionEndItem id={id}>
                             <img src={src} />
                         </ViewTransitionEndItem>
                         <ViewTransitionEndItem id={`title-${id}`}>
-                            <h1 className='title'>这是标题</h1>
+                            <div className='title'>这是标题</div>
                         </ViewTransitionEndItem>
                     </ViewTransitionEndGroup>
                 </div>
