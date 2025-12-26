@@ -108,16 +108,16 @@ function DemoComponent({
                     <div className="fixed left-0 top-0 right-0 bottom-0 inset-0 bg-white bg-opacity-800 p-4 z-9">
                          <div onClick={onClose} className='absolute left-4 top-4 cursor-pointer text-34px text-gray-600'>×</div>
                          
-                        <div className='w-[70%] mt-[15%] mx-auto flex flex-wrap items-stretch relative' onClick={(e) => e.stopPropagation()}>
+                        <div className='w-[70%] mt-[15%] h-[70vh] overflow-auto mx-auto flex flex-wrap items-stretch relative' onClick={(e) => e.stopPropagation()}>
                            
-                           <div className='w-full h-full flex flex-wrap relative'>
+                           <div className='w-full h-full flex flex-wrap relative overflow-hidden'>
                             <ViewTransitionEndGroup
                                 ref={transitionEndGroupRef}
                                 duration={duration}
                                 endDuration={endDuration}
                                 onClosed={onClosed}
                             >
-                                <div className="w-3/5 flex-grow-1">
+                                <div className="w-3/5 flex-grow-1 h-full">
                                     <ViewTransitionEnd id={activeItem.id}>
                                         <img className="rounded-xl w-full h-full object-cover" src={activeItem.src} alt={activeItem.title} />
                                     </ViewTransitionEnd>
@@ -135,7 +135,7 @@ function DemoComponent({
                                         }
                                     >
                                         <p className='mt-4'>This panel shows the selected item detail. Close to play the reverse FLIP animation.</p>
-                                        <p>This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.</p>
+                                        <p>This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.</p>
                                     </div>
                                 </div>
                             </ViewTransitionEndGroup>

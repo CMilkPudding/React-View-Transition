@@ -63,14 +63,14 @@ function DemoComponent({
 
         {show && (
             <div className='fixed inset-0 z-20 bg-dark-800 bg-opacity-80' onClick={onClickMask}>
-                <div className='fixed left-[10%] top-[20%] w-[80%]'>
+                <div className='fixed left-[10%] top-[20%] w-[80%] bottom-[20%]'>
                     <ViewTransitionEnd
                         ref={endRef}
                         id={selectedItem?.id}
                         onClosed={() => setShow(false)}
                         duration={duration}
                         endDuration={endDuration} >
-                        <img className='rounded-xl w-full' src={selectedItem?.src} />
+                        <img className='rounded-xl w-full h-full' src={selectedItem?.src} />
                     </ViewTransitionEnd>
                 </div>
             </div>
