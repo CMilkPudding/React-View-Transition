@@ -1,9 +1,8 @@
 import {
-    ViewTransitionStart,
     ViewTransitionEndGroup,
-    ViewTransitionEndItem,
+    ViewTransitionEnd,
     ViewTransitionStartGroup,
-    ViewTransitionStartItem,
+    ViewTransitionStart,
 } from 'react-view-transition-flip'
 import { useRef, useState } from 'react'
 import './ViewTransitionTrigger.scss'
@@ -25,12 +24,12 @@ export default function Page() {
         <div className="wrapper">
             <div className='item'>
                 <ViewTransitionStartGroup mode="click" onClick={() => setShow(true)}>
-                    <ViewTransitionStartItem id={id}>
+                    <ViewTransitionStart id={id}>
                         <img src={src} />
-                    </ViewTransitionStartItem>
-                    <ViewTransitionStartItem id={`title-${id}`}>
+                    </ViewTransitionStart>
+                    <ViewTransitionStart id={`title-${id}`}>
                         <div className='title'>这是标题</div>
-                    </ViewTransitionStartItem>
+                    </ViewTransitionStart>
                 </ViewTransitionStartGroup>
             </div>
         </div>
@@ -44,12 +43,12 @@ export default function Page() {
                         endDuration={800}
                         onClosed={() => setShow(false)}
                     >
-                        <ViewTransitionEndItem id={id}>
+                        <ViewTransitionEnd id={id}>
                             <img src={src} />
-                        </ViewTransitionEndItem>
-                        <ViewTransitionEndItem id={`title-${id}`}>
+                        </ViewTransitionEnd>
+                        <ViewTransitionEnd id={`title-${id}`}>
                             <h1 className='title'>这是标题</h1>
-                        </ViewTransitionEndItem>
+                        </ViewTransitionEnd>
                     </ViewTransitionEndGroup>
                 </div>
             </div>

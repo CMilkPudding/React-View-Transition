@@ -105,7 +105,7 @@ export function play(
     dy: first.top - last.y
   }
 
-  console.log('key---', key, 'first', first, 'last', last, 'dxy', dXY, 'el', el)
+  // console.log('key---', key, 'first', first, 'last', last, 'dxy', dXY, 'el', el)
 
   el.style.setProperty("--origin-width", first.width + 'px');
   el.style.setProperty("--origin-height", first.height + 'px');

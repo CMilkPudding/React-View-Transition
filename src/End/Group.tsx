@@ -8,7 +8,7 @@ export type ViewTransitionEndGroupRef = {
 }
 
 export interface ViewTransitionEndGroupProps {
-  /** 子元素，通常是多个 ViewTransitionEndItem */
+  /** 子元素，通常是多个 ViewTransitionEnd */
   children: ReactNode
   /** 开始动画持续时间(ms) */
   duration?: number

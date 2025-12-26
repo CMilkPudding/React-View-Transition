@@ -1,84 +1,76 @@
-import type { ReactElement, MouseEvent, CSSProperties } from 'react'
-import { useEffect, useRef } from 'react'
+import type { ReactElement, Ref } from 'react'
+import { useEffect, useRef, useCallback, Children, isValidElement, cloneElement } from 'react'
 import { play, DEFAULT_ANIMATE_DURATION } from '../flip'
+import { useViewTransitionEndGroup } from './context'
 import './index.scss'
 
+interface ChildProps {
+  ref?: Ref<HTMLElement>
+}
+
 export interface ViewTransitionEndProps {
-  /** 子元素 */
-  children: ReactElement
+  /** 子元素，仅支持单个根元素 */
+  children: ReactElement<ChildProps>
   /** 唯一标识，与 ViewTransitionStart 的 id 对应 */
   id: string | number
-  /** 开始动画持续时间(ms) */
+  /** 开始动画持续时间(ms)，组合模式下由 Group 控制 */
   duration?: number
-  /** 结束动画持续时间(ms) */
+  /** 结束动画持续时间(ms)，组合模式下由 Group 控制 */
   endDuration?: number
-  /** 关闭回调 */
-  onClose?: () => void
   /** 显示完成回调 */
   onShow?: () => void
-  /** 遮罩层自定义 className */
-  maskClassName?: string
-  /** 遮罩层自定义样式 */
-  maskStyle?: CSSProperties
-  /** 内容区自定义 className */
-  contentClassName?: string
-  /** 内容区自定义样式 */
-  contentStyle?: CSSProperties
-  /** 是否可点击遮罩关闭 */
-  maskClosable?: boolean
 }
 
 export default function ViewTransitionEnd({
   id,
-  onClose,
   children,
   onShow,
-  duration = DEFAULT_ANIMATE_DURATION,
-  endDuration = DEFAULT_ANIMATE_DURATION,
-  maskClassName = '',
-  maskStyle,
-  contentClassName = '',
-  contentStyle,
-  maskClosable = true,
+  duration: propDuration,
+  endDuration: propEndDuration,
 }: ViewTransitionEndProps) {
+  const group = useViewTransitionEndGroup()
+  const elRef = useRef<HTMLElement>(null)
 
-  const contentRef = useRef<HTMLDivElement>(null)
+  // 判断元素是否仅一个根元素
+  Children.only(children)
 
-  // 页面加载后播放 FLIP （从列表捕获的 rect → 详情 rect）
+  // 使用组合的配置或自身的配置
+  const duration = group?.duration ?? propDuration ?? DEFAULT_ANIMATE_DURATION
+  const endDuration = group?.endDuration ?? propEndDuration ?? DEFAULT_ANIMATE_DURATION
+
+  // 页面加载后播放 FLIP 动画
   useEffect(() => {
     const timer = setTimeout(() => {
-      play(id, contentRef.current, onShow, false, duration)   // 开启动画
-    }, 0);
+      play(id, elRef.current, onShow, false, duration)
+    }, 0)
     return () => clearTimeout(timer)
-  }, [id])
+  }, [id, duration, onShow])
 
-  const close = () => {
-    if (!maskClosable) return
-    // 捕获详情位置 → 准备做反向动画
-    play(id, contentRef.current, () => {
-      onClose?.()
-    }, true, endDuration)
-  }
+  // 获取当前元素位置
+  const getRect = useCallback(() => {
+    return elRef.current?.getBoundingClientRect() ?? null
+  }, [])
 
-  const handleContentClick = (e: MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation()
-  }
+  // 关闭动画回调
+  const close = useCallback(() => {
+    if (!elRef.current) return
+    play(id, elRef.current, undefined, true, endDuration)
+  }, [id, endDuration])
 
-  return (
-    <div
-      className={`view-transition-mask ${maskClassName}`}
-      style={maskStyle}
-      onClick={close}
-    >
-      <div className="view-transition-bg" />
-      <div
-        ref={contentRef}
-        className={`view-transition-content ${contentClassName}`}
-        style={contentStyle}
-        onClick={handleContentClick}
-      >
-        {children}
-      </div>
-    </div>
-  )
+  // 注册到 Group
+  useEffect(() => {
+    if (!group) return
+    const unregister = group.register({
+      getRect,
+      close
+    })
+    return unregister
+  }, [group, getRect, close])
+
+  // 克隆 child 并注入 ref
+  const childWithRef = isValidElement(children)
+    ? cloneElement(children, { ref: elRef })
+    : children
+
+  return childWithRef
 }

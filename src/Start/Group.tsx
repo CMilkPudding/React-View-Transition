@@ -4,7 +4,7 @@ import { ViewTransitionStartGroupContext } from './context'
 import type { CaptureMode } from '../types'
 
 export interface ViewTransitionStartGroupProps {
-  /** 子元素，通常是多个 ViewTransitionStartItem */
+  /** 子元素，通常是多个 ViewTransitionStart */
   children: ReactNode
   /** 元素开始位置记录模式 click | observe */
   mode?: CaptureMode
