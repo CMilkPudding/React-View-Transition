@@ -1,4 +1,5 @@
 import type { Preview } from '@storybook/react-vite'
+import 'virtual:windi.css'
 
 const preview: Preview = {
   parameters: {
@@ -16,7 +17,7 @@ const preview: Preview = {
       test: 'todo'
     }
   },
-  tags: ['autodocs'],
+  // tags: ['autodocs'],
 };
 
 export default preview;
