@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import ViewTransitionStart from './Start';
-import ViewTransitionEnd from './End';
+import ViewTransitionStart from '../Start';
+import ViewTransitionEnd from '..//End';
 
 type ListItem = {
   id: number;
