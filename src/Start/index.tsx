@@ -103,25 +103,31 @@ export default function ViewTransitionStart({
   // 克隆 child 并注入 ref 和 onClick
   const childWithRef = isValidElement(children)
     ? cloneElement(children, {
-        ref: elRef,
-        onClick: (e: MouseEvent<HTMLElement>) => {
-          // 1. click 模式下捕获位置
-          if (mode === 'click' && !group) {
-            // 非 Group 模式，自己捕获
-            validateId(id)
-            capture(id, e.currentTarget)
-          }
+      ref: elRef,
+      onClick: (e: MouseEvent<HTMLElement>) => {
+        console.log('start inner click')
+        // 1. click 模式下捕获位置
+        if (mode === 'click' && !group) {
+          // 非 Group 模式，自己捕获
+          validateId(id)
+          capture(id, e.currentTarget)
+        }
 
-          // 2. 调用 children 原本的 onClick
-          children.props.onClick?.(e)
-
-          // 3. 调用外部传入的 onClick
-          propOnClick?.(e)
-
+        if (group?.onClick) {
           // 4. 调用 Group 的 onClick（会触发 captureAll）
           group?.onClick?.(e)
+          return
         }
-      })
+
+        // 2. 调用 children 原本的 onClick
+        children.props.onClick?.(e)
+
+        // 3. 调用外部传入的 onClick
+        propOnClick?.(e)
+
+
+      }
+    })
     : children
 
   return childWithRef
