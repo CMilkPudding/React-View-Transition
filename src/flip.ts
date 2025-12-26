@@ -1,3 +1,5 @@
+import type { AnimationType } from "./types"
+
 /** 默认动画持续时间(ms) */
 export const DEFAULT_ANIMATE_DURATION = 500
 
@@ -10,7 +12,8 @@ export interface RectCache {
   width: number
   height: number
   x: number
-  y: number
+  y: number,
+  fontSize?: number
 }
 
 type CacheMap = Record<string | number, RectCache>
@@ -57,8 +60,23 @@ export function clearCache(key?: string | number): void {
 export function capture(key: string | number, el: HTMLElement | null): void {
   if (!el) return
 
+  const rect = el.getBoundingClientRect()
+  const computedStyle = window.getComputedStyle(el)
+  const fontSize = parseFloat(computedStyle.fontSize) || undefined
+
+  // TODO ...rect 无法获取到值
+  console.log('capture', rect, { ...rect, fontSize })
+
   const cache = getCache()
-  cache[key] = el.getBoundingClientRect()
+  cache[key] = {
+    left: rect.left,
+    top: rect.top,
+    width: rect.width,
+    height: rect.height,
+    x: rect.x,
+    y: rect.y,
+    fontSize
+  }
   setCache(cache)
 
 }
@@ -78,7 +96,8 @@ export function play(
   el: HTMLElement | null,
   cbAni?: AnimationCallback,
   isReverse = false,
-  duration = DEFAULT_ANIMATE_DURATION
+  duration = DEFAULT_ANIMATE_DURATION,
+  animationType: AnimationType = 'all'
 ): void {
   const cache = getCache()
   const first = cache[key]
@@ -106,24 +125,35 @@ export function play(
   }
 
   // console.log('key---', key, 'first', first, 'last', last, 'dxy', dXY, 'el', el)
+  if (animationType == 'all' || animationType == 'position') {
+    el.style.setProperty("--origin-width", first.width + 'px');
+    el.style.setProperty("--origin-height", first.height + 'px');
+    el.style.setProperty("--target-width", last.width + 'px');
+    el.style.setProperty("--target-height", last.height + 'px');
 
-  el.style.setProperty("--origin-width", first.width + 'px');
-  el.style.setProperty("--origin-height", first.height + 'px');
-  el.style.setProperty("--target-width", last.width + 'px');
-  el.style.setProperty("--target-height", last.height + 'px');
-
-  // TODO ?? 关闭动画时，点击获取的目标位置有偏差，导致元素无法正确回到原位（这里暂时绕过）
-  if (!isReverse) {
-    el.style.setProperty("--tX", dXY.dx + 'px');
-    el.style.setProperty("--tY", dXY.dy + 'px');
+    // TODO ?? 关闭动画时，点击获取的目标位置有偏差，导致元素无法正确回到原位（这里暂时绕过）
+    if (!isReverse) {
+      el.style.setProperty("--tX", dXY.dx + 'px');
+      el.style.setProperty("--tY", dXY.dy + 'px');
+    }
   }
 
 
-  // 反向动画
-  if (isReverse) {
-    el.style.animation = `fade_hide ${duration}ms forwards`;
+  if (animationType === 'all' || animationType == 'font') {
+    // 文字模式：仅变化字体大小和位置
+    const computedStyle = window.getComputedStyle(el)
+    const targetFontSize = parseFloat(computedStyle.fontSize)
+
+    first.fontSize && el.style.setProperty("--origin-font-size", first.fontSize + 'px');
+    targetFontSize && el.style.setProperty("--target-font-size", targetFontSize + 'px');
+  }
+
+  // 仅字体变化
+  if (animationType === 'font') {
+    el.style.animation = el.style.animation = isReverse ? `text_hide ${duration}ms forwards` : `text-show ${duration}ms forwards`;
   } else {
-    el.style.animation = `fade_show ${duration}ms forwards`
+    // 所有变化 和 位置变化
+    el.style.animation = isReverse ? `fade_hide ${duration}ms forwards` : `fade_show ${duration}ms forwards`;
   }
 
   // 动画结束回调

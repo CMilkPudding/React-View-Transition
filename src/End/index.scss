@@ -3,12 +3,14 @@
     width: var(--origin-width, 50px);
     height: var(--origin-height, 50px);
     transform: translate(var(--tX), var(--tY));
+    font-size: var(--origin-font-size, inherit);
     opacity: 0;
   }
 
   to {
     width: var(--target-width, 100px);
     height: var(--target-height, 100px);
+    font-size: var(--target-font-size, inherit);
     transform: translate(0, 0);
     opacity: 1;
   }
@@ -19,13 +21,44 @@
     width: var(--target-width, 100px);
     height: var(--target-height, 100px);
     transform: translate(0, 0);
+    font-size: var(--target-font-size, inherit);
     opacity: 1;
   }
 
   to {
     width: var(--origin-width, 50px);
     height: var(--origin-height, 50px);
+    font-size: var(--origin-font-size, inherit);
     transform: translate(var(--tX), var(--tY));
+    opacity: 0;
+  }
+}
+
+
+@keyframes text_show {
+  from {
+    transform: translate(var(--tX), var(--tY));
+    font-size: var(--origin-font-size, inherit);
+    opacity: 0;
+  }
+
+  to {
+    transform: translate(0, 0);
+    font-size: var(--target-font-size, inherit);
+    opacity: 1;
+  }
+}
+
+@keyframes text_hide {
+  from {
+    transform: translate(0, 0);
+    font-size: var(--target-font-size, inherit);
+    opacity: 1;
+  }
+
+  to {
+    transform: translate(var(--tX), var(--tY));
+    font-size: var(--origin-font-size, inherit);
     opacity: 0;
   }
 }
