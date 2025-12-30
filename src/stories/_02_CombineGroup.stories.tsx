@@ -110,7 +110,7 @@ function DemoComponent({
                          
                         <div className='w-[70%] mt-[15%] h-[70vh] overflow-auto mx-auto flex flex-wrap items-stretch relative' onClick={(e) => e.stopPropagation()}>
                            
-                           <div className='w-full h-full flex flex-wrap relative overflow-hidden'>
+                           <div className='w-full h-full flex flex-wrap relative'>
                             <ViewTransitionEndGroup
                                 ref={transitionEndGroupRef}
                                 duration={duration}

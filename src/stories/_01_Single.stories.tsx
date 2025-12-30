@@ -23,7 +23,7 @@ function DemoComponent({
 }: CompProps) {
       const items = useMemo<any[]>(
         () =>
-          Array.from({ length: 12 }, (_, i) => {
+          Array.from({ length: 34 }, (_, i) => {
             const id = 'sing-item' + i
             return {
               id,
@@ -33,7 +33,7 @@ function DemoComponent({
           }),
         []
       )
-    const { id, src } = data
+
     const [show, setShow] = useState(false)
     const [selectedItem, setSelectedItem] = useState(null)
 
@@ -63,7 +63,7 @@ function DemoComponent({
 
         {show && (
             <div className='fixed inset-0 z-20 bg-dark-800 bg-opacity-80' onClick={onClickMask}>
-                <div className='fixed left-[10%] top-[20%] w-[80%] bottom-[20%]'>
+                <div className='fixed left-[10%] top-[10%] w-[80%] bottom-[10%]'>
                     <ViewTransitionEnd
                         ref={endRef}
                         id={selectedItem?.id}

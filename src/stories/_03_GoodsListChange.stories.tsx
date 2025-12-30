@@ -36,13 +36,17 @@ function DemoComponent({ duration = 650, endDuration = 600 }: CompProps) {
         []
     )
 
+    const [detailTextVisible, setDetailTextVisible] = useState(false)
+
     const [viewMode, setViewMode] = useState<ViewMode>('grid')
     const endGroupRef = useRef<ViewTransitionEndGroupRef | null>(null)
 
     const toggleView = () => {
         if (viewMode === 'grid') {
+            setDetailTextVisible(true)
             setViewMode('list')
         } else {
+            setDetailTextVisible(false)
             endGroupRef.current?.closeAll()
         }
     }
@@ -191,7 +195,9 @@ function DemoComponent({ duration = 650, endDuration = 600 }: CompProps) {
                                                             {product.name}
                                                         </div>
                                                     </ViewTransitionEnd>
-                                                    <p className="text-xs text-gray-500 mb-2">
+
+                                                    <p className={ 'text-xs text-gray-500 mb-2 transition-all duration-200 ease-out delay-100 ' +
+                                            (detailTextVisible ? 'opacity-100' : 'opacity-0') }>
                                                         Premium quality product from our collection
                                                     </p>
                                                 </div>
@@ -236,9 +242,9 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-    name: 'Grid ↔ List View (FLIP Animation)',
+    name: 'Grid ↔ List',
     args: {
         duration: 600,
-        endDuration: 500,
+        endDuration: 3000,
     },
 }
