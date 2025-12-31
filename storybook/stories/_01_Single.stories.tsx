@@ -4,8 +4,8 @@
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useMemo, useRef, useState } from 'react';
-import ViewTransitionStart from '../Start';
-import ViewTransitionEnd from '../End';
+import ViewTransitionStart from '@/Start';
+import ViewTransitionEnd from '@/End';
 
 const data = {
     id: 106,

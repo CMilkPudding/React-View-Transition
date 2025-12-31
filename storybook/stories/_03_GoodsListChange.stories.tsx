@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useMemo, useState, useRef } from 'react'
-import ViewTransitionStart from '../Start'
-import ViewTransitionEnd from '../End'
-import ViewTransitionEndGroup from '../End/Group'
-import type { ViewTransitionEndGroupRef } from '../End/Group'
+import ViewTransitionStart from '@/Start'
+import ViewTransitionEnd from '@/End'
+import ViewTransitionEndGroup from '@/End/Group'
+import type { ViewTransitionEndGroupRef } from '@/End/Group'
 import { v4 as uuid } from 'uuid'
-import ViewTransitionStartGroup from '../Start/Group'
+import ViewTransitionStartGroup from '@/Start/Group'
 
 type Product = {
     id: string | string

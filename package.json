@@ -92,6 +92,7 @@
   },
   "homepage": "https://github.com/CMilkPudding/React-View-Transition#readme",
   "dependencies": {
+    "clsx": "^2.1.1",
     "uuid": "^13.0.0"
   }
 }

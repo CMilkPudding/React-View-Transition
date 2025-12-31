@@ -1,11 +1,11 @@
 
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import ViewTransitionStart from '../Start'
-import ViewTransitionStartGroup from '../Start/Group'
-import ViewTransitionEnd from '../End'
-import ViewTransitionEndGroup from '../End/Group'
-import type { ViewTransitionEndGroupRef } from '../End/Group'
+import ViewTransitionStart from '@/Start'
+import ViewTransitionStartGroup from '@/Start/Group'
+import ViewTransitionEnd from '@/End'
+import ViewTransitionEndGroup from '@/End/Group'
+import type { ViewTransitionEndGroupRef } from '@/End/Group'
 
 type Film = {
   id: number
