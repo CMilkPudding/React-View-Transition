@@ -19,6 +19,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
+      '_storybook': path.resolve(__dirname, 'storybook'),
       'react-view-transition-flip': path.resolve(__dirname, 'src'),
       'react-view-transition-flip_dist': path.resolve(__dirname, 'dist')
     }

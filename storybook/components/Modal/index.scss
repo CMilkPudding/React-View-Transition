@@ -1,0 +1,59 @@
+.modal {
+  @apply fixed top-0 w-full h-100vh;
+  --bg-color: 0, 0, 0;
+  --bg-alpha: 0.8;
+  --duration: 400ms;
+  
+  background-color: rgba(var(--bg-color, #000), var(--bg-alpha, 0.8));
+  animation-duration: var(--duration);
+  z-index: 1000;
+}
+.modal.animation-in {
+  animation-name: show;
+  animation-fill-mode: forwards;
+}
+
+.modal.animation-out {
+  animation-name: hide;
+  animation-fill-mode: forwards;
+}
+
+.drawer {
+  @apply fixed top-0 right-0 w-full h-100vh bg-white dark:bg-gray-800;
+  --drawer-wdith: 200px;
+  --drawer-x: 200px;
+  max-width: 400px;
+  width: var(--drawer-wdith);
+  translate: var(--drawer-x);
+  animation-duration: 400ms;
+  z-index: 1000;
+
+  &.animation-in {
+    animation-name: keep-fade-in;
+    animation-fill-mode: forwards;
+  }
+
+  &.animation-out {
+    animation-name: keep-fade-out;
+    animation-fill-mode: forwards;
+  }
+}
+
+@keyframes show {
+  0% { background-color: rgba(var(--bg-color, #000), 0); }
+  100% { background-color: rgba(var(--bg-color, #000), var(--bg-alpha, 0.8)); }
+}
+@keyframes hide {
+  0% { background-color: rgba(var(--bg-color, #000), var(--bg-alpha, 0.8)); }
+  100% { background-color: rgba(var(--bg-color, #000), 0); }
+}
+
+@keyframes keep-fade-in {
+  0% { opacity: 0; translate: var(--drawer-x); }
+  100% { opacity: 1; translate: 0; }
+}
+
+@keyframes keep-fade-out {
+  0% { opacity: 1; translate: 0; }
+  100% { opacity: 0; translate: var(--drawer-x) }
+}

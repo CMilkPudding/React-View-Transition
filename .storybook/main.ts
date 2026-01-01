@@ -1,6 +1,6 @@
 import type { StorybookConfig } from '@storybook/react-vite';
-// import { mergeConfig } from 'vite';
-// import WindiCss from 'vite-plugin-windicss';
+import { mergeConfig } from 'vite';
+import WindiCss from 'vite-plugin-windicss';
 
 const config: StorybookConfig = {
   "stories": [
@@ -15,10 +15,10 @@ const config: StorybookConfig = {
     "@storybook/addon-onboarding"
   ],
   "framework": "@storybook/react-vite",
-  // async viteFinal(config) {
-  //   return mergeConfig(config, {
-  //     plugins: [WindiCss()],
-  //   });
-  // },
+  async viteFinal(config) {
+    return mergeConfig(config, {
+      plugins: [WindiCss()],
+    });
+  },
 };
 export default config;

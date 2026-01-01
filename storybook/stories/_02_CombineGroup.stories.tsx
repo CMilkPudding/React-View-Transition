@@ -9,6 +9,7 @@ import ViewTransitionStartGroup from '@/Start/Group'
 import ViewTransitionEnd from '@/End'
 import ViewTransitionEndGroup from '@/End/Group'
 import type { ViewTransitionEndGroupRef } from '@/End/Group'
+import Modal, { ModalRef } from '../components/Modal';
 
 type Item = {
     id: string
@@ -41,13 +42,17 @@ function DemoComponent({
     const [selectedItem, setSelectedItem] = useState<Item | null>(null)
     const [detailTextVisible, setDetailTextVisible] = useState(false)
 
+    const modalRef = useRef<ModalRef>(null)
+
     const onSelect = (item: Item) => {
         setSelectedItem(item)
+        modalRef.current?.show()
     }
 
     const transitionEndGroupRef = useRef<ViewTransitionEndGroupRef | null>(null)
     const onClose = () => {
         setDetailTextVisible(false)
+        modalRef.current?.close()
         transitionEndGroupRef.current?.closeAll()
     }
 
@@ -104,11 +109,11 @@ function DemoComponent({
                     </div>
                 </div>
 
-                {activeItem && (
+                {/* {activeItem && (
                     <div className="fixed left-0 top-0 right-0 bottom-0 inset-0 bg-white bg-opacity-800 p-4 z-9">
                          <div onClick={onClose} className='absolute left-4 top-4 cursor-pointer text-34px text-gray-600'>×</div>
                          
-                        <div className='w-[70%] mt-[15%] h-[70vh] overflow-auto mx-auto flex flex-wrap items-stretch relative' onClick={(e) => e.stopPropagation()}>
+                        <div className='w-[70%] mt-[15%] h-[70vh]  mx-auto flex flex-wrap items-stretch relative' onClick={(e) => e.stopPropagation()}>
                            
                            <div className='w-full h-full flex flex-wrap relative'>
                             <ViewTransitionEndGroup
@@ -142,7 +147,47 @@ function DemoComponent({
                             </div>
                         </div>
                     </div>
-                )}
+                )} */}
+
+                {
+                    <Modal ref={modalRef} clickClose={false} bgColor='255, 255, 255' alpha={1} duration={800}>
+                        <div onClick={onClose} className='absolute left-4 top-4 cursor-pointer text-34px text-gray-600'>×</div>
+                         
+                        <div className='w-[70%] mt-[15%] h-[70vh]  mx-auto flex flex-wrap items-stretch relative' onClick={(e) => e.stopPropagation()}>
+                           
+                           <div className='w-full h-full flex flex-wrap relative'>
+                            <ViewTransitionEndGroup
+                                ref={transitionEndGroupRef}
+                                duration={duration}
+                                endDuration={endDuration}
+                                onClosed={onClosed}
+                            >
+                                <div className="w-3/5 flex-grow-1 h-full">
+                                    <ViewTransitionEnd id={activeItem?.id}>
+                                        <img className="rounded-xl w-full h-full object-cover" src={activeItem?.src} alt={activeItem?.title} />
+                                    </ViewTransitionEnd>
+                                </div>
+
+                                
+                                <div className='w-2/5 relative p-4 flex flex-col items-center'>
+                                 <ViewTransitionEnd id={`title-${activeItem?.id}`} animationType='all'>
+                                        <div className="min-h-48px w-[5/2] text-base font-semibold text-green-500 text-48px relative -left-1/3 z-30 truncate">{activeItem?.title}</div>
+                                    </ViewTransitionEnd>
+                                    <div
+                                        className={
+                                            'mt-6 w-full h-full overflow-auto  leading-relaxed text-dark-500 transition-all duration-200 ease-out delay-100 ' +
+                                            (detailTextVisible ? 'opacity-100' : 'opacity-0')
+                                        }
+                                    >
+                                        <p className='mt-4'>This panel shows the selected item detail. Close to play the reverse FLIP animation.</p>
+                                        <p>This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.</p>
+                                    </div>
+                                </div>
+                            </ViewTransitionEndGroup>
+                            </div>
+                        </div>
+                    </Modal>
+                }
             </div>
         </div>
     )
@@ -163,8 +208,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     args: {
-        duration: 800,
-        endDuration: 500
+        duration: 1500,
+        endDuration: 1500
     }
 }
 
