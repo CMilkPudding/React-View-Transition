@@ -9,8 +9,6 @@ export interface ViewTransitionStartGroupContextValue {
   onClick?: (e: MouseEvent<HTMLElement>) => void
   /** 注册 Item 的 capture 函数 */
   register: (captureFn: () => void) => () => void
-  /** 触发所有 Item 捕获位置 */
-  captureAll: () => void
 }
 
 export const ViewTransitionStartGroupContext = createContext<ViewTransitionStartGroupContextValue | null>(null)

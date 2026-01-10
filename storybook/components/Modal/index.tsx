@@ -18,11 +18,14 @@ export interface ModalProps {
   bgColor?: string,
   alpha?: number,
   /** 动画时长（ms） */
-  duration?: number
+  duration?: number,
+  durationIn?: number,
+  /** 结束动画时长（注： 因关闭动画时，组件内部设置了动画完成回调隐藏当前组件， 所以当组件内部元素有动画时， 蒙版组件的结束动画最好设置为大于等于内容的动画时长，否则执行关闭动画时，出现蒙版组件和其插槽内容突然消失情况） */
+  durationOut?: number
 }
 
 export default function Modal(props: ModalProps) {
-  const { onClose, children, ref, clickClose, bgColor, alpha, duration } = props
+  const { onClose, children, ref, clickClose, bgColor, alpha, duration, durationIn, durationOut } = props
   const [show, setShow] = useState(false)
   const [display, setDisplay] = useState(false)
 
@@ -68,7 +71,9 @@ export default function Modal(props: ModalProps) {
       style={{
         '--bg-color': bgColor,
         '--bg-alpha': alpha,
-        '--duration': duration ? duration + 'ms' : ''
+        '--duration': duration ? duration + 'ms' : '',
+        '--duration-in': durationIn ? durationIn + 'ms' : '',
+        '--duration-out': durationOut ? durationOut + 'ms' : '',
       }}
     >{children}</div>, document.body
   )

@@ -11,11 +11,13 @@
 .modal.animation-in {
   animation-name: show;
   animation-fill-mode: forwards;
+  animation-duration: var(--duration-in, --duration);
 }
 
 .modal.animation-out {
   animation-name: hide;
   animation-fill-mode: forwards;
+  animation-duration: var(--duration-out, --duration);
 }
 
 .drawer {

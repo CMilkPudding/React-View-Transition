@@ -84,7 +84,7 @@ function DemoComponent({
 
 
         {
-            <Modal ref={modalRef} onClose={onClickMask}>
+            <Modal ref={modalRef} onClose={onClickMask} durationOut={endDuration}>
                 <div className='fixed left-[10%] top-[10%] w-[80%] bottom-[10%]'>
                     <ViewTransitionEnd
                         ref={endRef}

@@ -39,14 +39,17 @@ function DemoComponent({
         []
     )
 
-    const [selectedItem, setSelectedItem] = useState<Item | null>(null)
+    const [activeItem, setActiveItem] = useState<Item | null>(null)
     const [detailTextVisible, setDetailTextVisible] = useState(false)
 
     const modalRef = useRef<ModalRef>(null)
+    const transitionStartGroupRef = useRef<ViewTransitionEndGroupRef>(null)
 
     const onSelect = (item: Item) => {
-        setSelectedItem(item)
+        setActiveItem(item)
+        setDetailTextVisible(true)
         modalRef.current?.show()
+        transitionStartGroupRef.current?.captureAll()
     }
 
     const transitionEndGroupRef = useRef<ViewTransitionEndGroupRef | null>(null)
@@ -57,23 +60,10 @@ function DemoComponent({
     }
 
     const onClosed = () => {
-        setSelectedItem(null)
-        setDetailTextVisible(false)
+        setActiveItem(null)
     }
 
     const noScrollbar = '[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'
-    const activeItem = selectedItem
-
-    useEffect(() => {
-        if (!activeItem) {
-            setDetailTextVisible(false)
-            return
-        }
-
-        setDetailTextVisible(false)
-        const raf = requestAnimationFrame(() => setDetailTextVisible(true))
-        return () => cancelAnimationFrame(raf)
-    }, [activeItem?.id])
 
     return (
         <div className="h-[100dvh] bg-gray-50 p-4">
@@ -87,8 +77,8 @@ function DemoComponent({
                     <div className={`flex-1 overflow-auto p-4 ${noScrollbar}`}>
                         <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(200px,1fr))]">
                             {items.map((item) => (
-                                <div key={item.id} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-                                    <ViewTransitionStartGroup mode="click" onClick={() => onSelect(item)}>
+                                <div key={item.id} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden" onClick={() => onSelect(item)}>
+                                    <ViewTransitionStartGroup ref={transitionStartGroupRef} mode="click" >
                                         {/* <ViewTransitionStart id={`card-${item.id}`}> */}
                                         <div className="cursor-pointer">
                                             <ViewTransitionStart id={item.id}>
@@ -109,48 +99,8 @@ function DemoComponent({
                     </div>
                 </div>
 
-                {/* {activeItem && (
-                    <div className="fixed left-0 top-0 right-0 bottom-0 inset-0 bg-white bg-opacity-800 p-4 z-9">
-                         <div onClick={onClose} className='absolute left-4 top-4 cursor-pointer text-34px text-gray-600'>×</div>
-                         
-                        <div className='w-[70%] mt-[15%] h-[70vh]  mx-auto flex flex-wrap items-stretch relative' onClick={(e) => e.stopPropagation()}>
-                           
-                           <div className='w-full h-full flex flex-wrap relative'>
-                            <ViewTransitionEndGroup
-                                ref={transitionEndGroupRef}
-                                duration={duration}
-                                endDuration={endDuration}
-                                onClosed={onClosed}
-                            >
-                                <div className="w-3/5 flex-grow-1 h-full">
-                                    <ViewTransitionEnd id={activeItem.id}>
-                                        <img className="rounded-xl w-full h-full object-cover" src={activeItem.src} alt={activeItem.title} />
-                                    </ViewTransitionEnd>
-                                </div>
-
-                                
-                                <div className='w-2/5 relative p-4 flex flex-col items-center'>
-                                 <ViewTransitionEnd id={`title-${activeItem.id}`} animationType='all'>
-                                        <div className="min-h-48px w-[5/2] text-base font-semibold text-green-500 text-48px relative -left-1/3 z-30 truncate">{activeItem.title}</div>
-                                    </ViewTransitionEnd>
-                                    <div
-                                        className={
-                                            'mt-6 w-full h-full overflow-auto  leading-relaxed text-dark-500 transition-all duration-200 ease-out delay-100 ' +
-                                            (detailTextVisible ? 'opacity-100' : 'opacity-0')
-                                        }
-                                    >
-                                        <p className='mt-4'>This panel shows the selected item detail. Close to play the reverse FLIP animation.</p>
-                                        <p>This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.</p>
-                                    </div>
-                                </div>
-                            </ViewTransitionEndGroup>
-                            </div>
-                        </div>
-                    </div>
-                )} */}
-
                 {
-                    <Modal ref={modalRef} clickClose={false} bgColor='255, 255, 255' alpha={1} duration={800}>
+                    <Modal ref={modalRef} clickClose={false} bgColor='255, 255, 255' alpha={1} durationIn={800} durationOut={endDuration}>
                         <div onClick={onClose} className='absolute left-4 top-4 cursor-pointer text-34px text-gray-600'>×</div>
                          
                         <div className='w-[70%] mt-[15%] h-[70vh]  mx-auto flex flex-wrap items-stretch relative' onClick={(e) => e.stopPropagation()}>
@@ -170,12 +120,12 @@ function DemoComponent({
 
                                 
                                 <div className='w-2/5 relative p-4 flex flex-col items-center'>
-                                 <ViewTransitionEnd id={`title-${activeItem?.id}`} animationType='all'>
-                                        <div className="min-h-48px w-[5/2] text-base font-semibold text-green-500 text-48px relative -left-1/3 z-30 truncate">{activeItem?.title}</div>
+                                    <ViewTransitionEnd id={`title-${activeItem?.id}`} >
+                                        <div className="min-h-48px w-[5/2] text-base font-semibold text-green-500 text-48px relative  z-30 truncate">{activeItem?.title}</div>
                                     </ViewTransitionEnd>
                                     <div
                                         className={
-                                            'mt-6 w-full h-full overflow-auto  leading-relaxed text-dark-500 transition-all duration-200 ease-out delay-100 ' +
+                                            'mt-6 w-full h-full overflow-auto  leading-relaxed text-dark-500 transition-all duration-800 ease-out delay-100 ' +
                                             (detailTextVisible ? 'opacity-100' : 'opacity-0')
                                         }
                                     >
@@ -208,8 +158,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     args: {
-        duration: 1500,
-        endDuration: 1500
+        duration: 8000,
+        endDuration: 3000
     }
 }
 

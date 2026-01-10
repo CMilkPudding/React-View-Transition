@@ -1,22 +1,23 @@
 import type { ReactNode, MouseEvent } from 'react'
-import { useRef, useCallback } from 'react'
+import { useRef, useCallback, forwardRef, useImperativeHandle } from 'react'
 import { ViewTransitionStartGroupContext } from './context'
 import type { CaptureMode } from '../types'
+
+export type ViewTransitionStartGroupRef = {
+  captureAll: () => void
+}
 
 export interface ViewTransitionStartGroupProps {
   /** 子元素，通常是多个 ViewTransitionStart */
   children: ReactNode
   /** 元素开始位置记录模式 click | observe */
   mode?: CaptureMode
-  /** 点击回调，点击任意 Item 时触发 */
-  onClick?: (e: MouseEvent<HTMLElement>) => void
 }
 
-export default function ViewTransitionStartGroup({
+const ViewTransitionStartGroup = forwardRef<ViewTransitionStartGroupRef, ViewTransitionStartGroupProps>(function ViewTransitionStartGroup({
   children,
   mode = 'click',
-  onClick,
-}: ViewTransitionStartGroupProps) {
+}: ViewTransitionStartGroupProps, ref) {
   const captureFns = useRef<Set<() => void>>(new Set())
 
   // 注册 Item 的 capture 函数
@@ -35,9 +36,13 @@ export default function ViewTransitionStartGroup({
     if (mode === 'click') {
       captureAll()
     }
-    
-    onClick?.(e)
-  }, [mode, captureAll, onClick])
+
+  }, [mode, captureAll])
+
+  // 暴露 方法给父组件
+  useImperativeHandle(ref, () => ({
+    captureAll
+  }), [captureAll])
 
   return (
     <ViewTransitionStartGroupContext.Provider
@@ -45,10 +50,11 @@ export default function ViewTransitionStartGroup({
         mode,
         onClick: handleClick,
         register,
-        captureAll,
       }}
     >
       {children}
     </ViewTransitionStartGroupContext.Provider>
   )
-}
+})
+
+export default ViewTransitionStartGroup;
