@@ -102,39 +102,43 @@ function DemoComponent({
                 {
                     <Modal ref={modalRef} clickClose={false} bgColor='255, 255, 255' alpha={1} durationIn={800} durationOut={endDuration}>
                         <div onClick={onClose} className='absolute left-4 top-4 cursor-pointer text-34px text-gray-600'>×</div>
-                         
-                        <div className='w-[70%] mt-[15%] h-[70vh]  mx-auto flex flex-wrap items-stretch relative' onClick={(e) => e.stopPropagation()}>
-                           
-                           <div className='w-full h-full flex flex-wrap relative'>
+
+                        {/* 注：外层容器不应溢出截断，否则内容动画元素会被截断 */}
+                        <div className='w-[70%] mt-[15%] h-[70vh]  mx-auto flex w-full h-full flex gap-4 relative border border-solid border-red-500'>
                             <ViewTransitionEndGroup
                                 ref={transitionEndGroupRef}
                                 duration={duration}
                                 endDuration={endDuration}
                                 onClosed={onClosed}
                             >
-                                <div className="w-3/5 flex-grow-1 h-full">
+                                <div className="w-3/5 flex-grow-1 h-full  border border-solid border-blue-500">
                                     <ViewTransitionEnd id={activeItem?.id}>
                                         <img className="rounded-xl w-full h-full object-cover" src={activeItem?.src} alt={activeItem?.title} />
                                     </ViewTransitionEnd>
                                 </div>
 
-                                
-                                <div className='w-2/5 relative p-4 flex flex-col items-center'>
+                                 {/* 注：外层容器不应溢出截断，否则内容动画元素会被截断 */}
+                                <div className='w-2/5 relative p-4 flex flex-col items-center border border-solid border-green-500 justify-end'>
                                     <ViewTransitionEnd id={`title-${activeItem?.id}`} >
-                                        <div className="min-h-48px w-[5/2] text-base font-semibold text-green-500 text-48px relative  z-30 truncate">{activeItem?.title}</div>
+                                        <div className="min-h-48px max-w-[5/2] text-base font-semibold text-green-500 text-48px absolute top-0 right-0 z-30 truncate">{activeItem?.title}</div>
                                     </ViewTransitionEnd>
+
+                                    <div className='w-full h-[calc(100%-48px-20px)] overflow-hidden'>
+                                        {/* TODO 省略号显示优化... */}
                                     <div
                                         className={
-                                            'mt-6 w-full h-full overflow-auto  leading-relaxed text-dark-500 transition-all duration-800 ease-out delay-100 ' +
+                                            'w-full h-full leading-relaxed text-red-500 transition-opacity duration-800 ease-out' +
                                             (detailTextVisible ? 'opacity-100' : 'opacity-0')
                                         }
                                     >
-                                        <p className='mt-4'>This panel shows the selected item detail. Close to play the reverse FLIP animation.</p>
-                                        <p>This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.</p>
+                                       This panel shows the selected item detail. Close to play the reverse FLIP animation.
+                                       This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.
+                                       This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.
+                                       This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.
+                                    </div>
                                     </div>
                                 </div>
                             </ViewTransitionEndGroup>
-                            </div>
                         </div>
                     </Modal>
                 }
@@ -158,8 +162,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     args: {
-        duration: 8000,
-        endDuration: 3000
+        duration: 5000,
+        endDuration: 5000
     }
 }
 
