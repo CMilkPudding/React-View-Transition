@@ -6,6 +6,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import ViewTransitionStart from '@/Start'
 import ViewTransitionStartGroup from '@/Start/Group'
+import type { ViewTransitionStartGroupRef } from '@/Start/Group'
 import ViewTransitionEnd from '@/End'
 import ViewTransitionEndGroup from '@/End/Group'
 import type { ViewTransitionEndGroupRef } from '@/End/Group'
@@ -43,20 +44,21 @@ function DemoComponent({
     const [detailTextVisible, setDetailTextVisible] = useState(false)
 
     const modalRef = useRef<ModalRef>(null)
-    const transitionStartGroupRef = useRef<ViewTransitionEndGroupRef>(null)
+    const startGroupRef = useRef<ViewTransitionStartGroupRef>(null)
+    const endGroupRef = useRef<ViewTransitionEndGroupRef>(null)
 
     const onSelect = (item: Item) => {
         setActiveItem(item)
         setDetailTextVisible(true)
         modalRef.current?.show()
-        transitionStartGroupRef.current?.captureAll()
+        startGroupRef.current?.captureAll()
     }
 
-    const transitionEndGroupRef = useRef<ViewTransitionEndGroupRef | null>(null)
+    
     const onClose = () => {
         setDetailTextVisible(false)
         modalRef.current?.close()
-        transitionEndGroupRef.current?.closeAll()
+        endGroupRef.current?.closeAll()
     }
 
     const onClosed = () => {
@@ -78,7 +80,7 @@ function DemoComponent({
                         <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(200px,1fr))]">
                             {items.map((item) => (
                                 <div key={item.id} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden" onClick={() => onSelect(item)}>
-                                    <ViewTransitionStartGroup ref={transitionStartGroupRef} mode="click" >
+                                    <ViewTransitionStartGroup ref={startGroupRef} mode="click" >
                                         {/* <ViewTransitionStart id={`card-${item.id}`}> */}
                                         <div className="cursor-pointer">
                                             <ViewTransitionStart id={item.id}>
@@ -106,7 +108,7 @@ function DemoComponent({
                         {/* 注：外层容器不应溢出截断，否则内容动画元素会被截断 */}
                         <div className='left-[15%] w-[70%] top-[15%] h-[70vh]  mx-auto flex w-full h-full flex gap-4 absolute'>
                             <ViewTransitionEndGroup
-                                ref={transitionEndGroupRef}
+                                ref={endGroupRef}
                                 duration={duration}
                                 endDuration={endDuration}
                                 onClosed={onClosed}

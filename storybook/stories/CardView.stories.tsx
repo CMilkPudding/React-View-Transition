@@ -3,9 +3,12 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import ViewTransitionStart from '@/Start'
 import ViewTransitionStartGroup from '@/Start/Group'
+import type { ViewTransitionStartGroupRef } from '@/Start/Group'
 import ViewTransitionEnd from '@/End'
 import ViewTransitionEndGroup from '@/End/Group'
 import type { ViewTransitionEndGroupRef } from '@/End/Group'
+import Modal, { ModalRef } from '../components/Modal';
+import clsx from 'clsx'
 
 type Film = {
   id: number
@@ -51,29 +54,24 @@ function DemoComponent({ duration = 650, endDuration = 600 }: CompProps) {
   const [selected, setSelected] = useState<Film | null>(null)
   const [detailTextVisible, setDetailTextVisible] = useState(false)
 
-  const endGroupRef = useRef<ViewTransitionEndGroupRef | null>(null)
+  const modalRef = useRef<ModalRef>(null)
+  const startGroupRef = useRef<ViewTransitionStartGroupRef>(null)
+  const endGroupRef = useRef<ViewTransitionEndGroupRef>(null)
 
-  const openDetail = (film: Film) => setSelected(film)
+  const onShowDetail = (film: Film) => {
+    setSelected(film)
+    modalRef.current?.show()
+    startGroupRef.current?.captureAll()
+  }
   const onClose = () => {
     setDetailTextVisible(false)
+    modalRef.current?.close()
     endGroupRef.current?.closeAll()
   }
 
   const onClosed = () => {
     setSelected(null)
-    setDetailTextVisible(false)
   }
-
-  useEffect(() => {
-    if (!selected) {
-      setDetailTextVisible(false)
-      return
-    }
-
-    setDetailTextVisible(false)
-    const raf = requestAnimationFrame(() => setDetailTextVisible(true))
-    return () => cancelAnimationFrame(raf)
-  }, [selected?.id])
 
   return (
     <div className="h-[100dvh] bg-gray-100">
@@ -82,50 +80,48 @@ function DemoComponent({ duration = 650, endDuration = 600 }: CompProps) {
         <div className="h-full flex-1 overflow-auto bg-gray-50 pt-4 box-border">
           <div className="px-3 pb-4 space-y-3">
             {films.map((film) => (
-              <div key={film.id} className="bg-white overflow-hidden border border-gray-100 shadow-sm">
-                <ViewTransitionStartGroup mode="click" onClick={() => openDetail(film)}>
-                   <ViewTransitionStart id={film.id}>
-                      <div className="cursor-pointer relative h-[28vh]">
-                        <ViewTransitionStart id={`poster-${film.id}`}>
-                          <img className="w-full h-full object-cover" src={film.image} alt={film.title} />
-                        </ViewTransitionStart>
+              <div key={film.id} className="bg-white overflow-hidden border border-gray-100 shadow-sm" onClick={() => onShowDetail(film)}>
+                <ViewTransitionStartGroup ref={startGroupRef} mode="click">
+                  <div className="cursor-pointer relative h-[28vh]">
+                    <ViewTransitionStart id={`poster-${film.id}`}>
+                      <img className="w-full h-full object-cover" src={film.image} alt={film.title} />
+                    </ViewTransitionStart>
 
-                        <div className="px-3 pt-2 pb-3 space-y-1.5 absolute left-0 top-0 bottom-0 right-0 text-white bg-dark-900 bg-opacity-50 flex flex-col justify-end">
-                          <ViewTransitionStart id={`sub-title-${film.id}`}>
-                            <div className="text-xs text-gray-300">{film.subtitle}</div>
-                          </ViewTransitionStart>
+                    <div className="px-3 pt-2 pb-3 space-y-1.5 absolute left-0 top-0 bottom-0 right-0 text-white bg-dark-900 bg-opacity-50 flex flex-col justify-end">
+                      <ViewTransitionStart id={`sub-title-${film.id}`}>
+                        <div className="text-xs text-gray-300">{film.subtitle}</div>
+                      </ViewTransitionStart>
 
-                          <ViewTransitionStart id={`title-${film.id}`}>
-                            <div className="text-sm font-extrabold leading-tight">
-                              {film.title}
-                            </div>
-                          </ViewTransitionStart>
-                          <div className="flex items-center justify-between pt-1">
-                            <div className="flex items-center gap-1.5 text-xs text-gray-100">
-                              <span>{film.likes}</span>
-                              <span className="w-4 h-4 flex items-center justify-center text-gray-300" aria-hidden>
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                  <path
-                                    d="M12 21s-7-4.6-9.3-8.4C.4 9.2 2.2 5.5 6 5.2c2-.2 3.4.8 4.2 1.8.8-1 2.2-2 4.2-1.8 3.8.3 5.6 4 3.3 7.4C19 16.4 12 21 12 21Z"
-                                    stroke="currentColor"
-                                    strokeWidth="1.6"
-                                    strokeLinejoin="round"
-                                  />
-                                </svg>
-                              </span>
-                            </div>
+                      <ViewTransitionStart id={`title-${film.id}`}>
+                        <div className="text-sm font-extrabold leading-tight">
+                          {film.title}
+                        </div>
+                      </ViewTransitionStart>
+                      <div className="flex items-center justify-between pt-1">
+                        <div className="flex items-center gap-1.5 text-xs text-gray-100">
+                          <span>{film.likes}</span>
+                          <span className="w-4 h-4 flex items-center justify-center text-gray-300" aria-hidden>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path
+                                d="M12 21s-7-4.6-9.3-8.4C.4 9.2 2.2 5.5 6 5.2c2-.2 3.4.8 4.2 1.8.8-1 2.2-2 4.2-1.8 3.8.3 5.6 4 3.3 7.4C19 16.4 12 21 12 21Z"
+                                stroke="currentColor"
+                                strokeWidth="1.6"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                          </span>
+                        </div>
 
-                            <div className="w-4 h-4 flex items-center justify-center text-gray-300" aria-hidden>
-                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M6 12h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-                                <path d="M6 6h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-                                <path d="M6 18h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-                              </svg>
-                            </div>
-                          </div>
+                        <div className="w-4 h-4 flex items-center justify-center text-gray-300" aria-hidden>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6 12h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                            <path d="M6 6h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                            <path d="M6 18h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                          </svg>
                         </div>
                       </div>
-                    </ViewTransitionStart>
+                    </div>
+                  </div>
                 </ViewTransitionStartGroup>
               </div>
             ))}
@@ -176,17 +172,17 @@ function DemoComponent({ duration = 650, endDuration = 600 }: CompProps) {
         {/* footer e */}
       </div>
 
-      {selected && (
+      <Modal ref={modalRef} clickClose={false} bgColor='0, 0, 0' alpha={0.9} durationIn={duration} durationOut={endDuration}>
         <div className="fixed inset-0 flex justify-center z-20">
-          <div className="w-full max-w-[480px] h-[100dvh] bg-dark-900 bg-opacity-900  flex flex-col relative">
+          <div className="w-full max-w-[480px] h-[100dvh]  flex flex-col relative">
             <ViewTransitionEndGroup
               ref={endGroupRef}
               duration={duration}
               endDuration={endDuration}
               onClosed={onClosed}
             >
-              <ViewTransitionEnd id={`poster-${selected.id}`}>
-                <img className="w-full h-full object-cover" src={selected.image} alt={selected.title} />
+              <ViewTransitionEnd id={`poster-${selected?.id}`}>
+                <img className="w-full h-full object-cover" src={selected?.image} alt={selected?.title} />
               </ViewTransitionEnd>
 
               <div className="absolute top-0 left-0 right-0 bottom-0 bg-dark-900 bg-opacity-50 p-4 flex flex-col justify-end box-border">
@@ -201,15 +197,18 @@ function DemoComponent({ duration = 650, endDuration = 600 }: CompProps) {
                 </div>
                 {/* 关闭按钮 e */}
 
-                <ViewTransitionEnd id={`title-${selected.id}`}>
-                  <div className="text-lg font-extrabold leading-snug text-white">{selected.title}</div>
+                <ViewTransitionEnd id={`title-${selected?.id}`}>
+                  <div className="text-lg font-extrabold leading-snug text-white">{selected?.title}</div>
                 </ViewTransitionEnd>
-                <ViewTransitionEnd id={`sub-title-${selected.id}`}>
-                  <div className="mt-1 text-xs text-gray-300">{selected.subtitle}</div>
+                <ViewTransitionEnd id={`sub-title-${selected?.id}`}>
+                  <div className="mt-1 text-xs text-gray-300">{selected?.subtitle}</div>
                 </ViewTransitionEnd>
 
 
-                {detailTextVisible && <div className={'mb-4 transition-all duration-200 ease-out opacity-0' + (detailTextVisible ? 'opacity-100' : 'opacity-0')}>
+                <div className={clsx('mb-4 transition-all duration-200 ease-out opacity-0', {
+                  'opacity-100': detailTextVisible,
+                  'opacity-0': !detailTextVisible
+                })}>
                   <p className="mt-3 text-xs leading-relaxed text-gray-300">
                     This story simulates the “list to detail” transition in a mobile page. The image and title are animated
                     via FLIP.
@@ -218,12 +217,12 @@ function DemoComponent({ duration = 650, endDuration = 600 }: CompProps) {
                     Scroll the detail page to verify the layout stability. Click the back button to close.
                   </p>
                 </div>
-                }
               </div>
             </ViewTransitionEndGroup>
           </div>
         </div>
-      )}
+      </Modal>
+
     </div>
   )
 }
