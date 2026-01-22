@@ -3,7 +3,9 @@ import { useEffect, useRef, useCallback, Children, isValidElement, cloneElement,
 import { play, DEFAULT_ANIMATE_DURATION } from '../flip'
 import { useViewTransitionEndGroup } from './context'
 import './index.scss'
-import type { AnimationType } from "./types"
+import type { ShowMode, AnimationType } from "./types"
+
+const DEFAULT_SHOW_MODE : ShowMode = 'observe'
 
 export type ViewTransitionEnRef = {
   show: () => void
@@ -27,6 +29,7 @@ export interface ViewTransitionEndProps {
   onShow?: () => void,
   /** 动画关闭完成回调 */
   onClosed?: () => void,
+  showMode?: ShowMode
   animationType?: AnimationType
 }
 
@@ -37,7 +40,8 @@ const ViewTransitionEnd = forwardRef<ViewTransitionEnRef, ViewTransitionEndProps
   onClosed,
   duration: propDuration,
   endDuration: propEndDuration,
-  animationType
+  showMode: propShowMode = DEFAULT_SHOW_MODE,
+  animationType = 'all'
 }: ViewTransitionEndProps, ref) {
   const group = useViewTransitionEndGroup()
   const elRef = useRef<HTMLElement>(null)
@@ -46,16 +50,20 @@ const ViewTransitionEnd = forwardRef<ViewTransitionEnRef, ViewTransitionEndProps
   Children.only(children)
 
   // 使用组合的配置或自身的配置
+  const showMode = group?.showMode ?? propShowMode ?? DEFAULT_SHOW_MODE
   const duration = group?.duration ?? propDuration ?? DEFAULT_ANIMATE_DURATION
   const endDuration = group?.endDuration ?? propEndDuration ?? DEFAULT_ANIMATE_DURATION
 
-  // // 页面加载后播放 FLIP 动画
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     play(id, elRef.current, onShow, false, duration, animationType)
-  //   }, 0)
-  //   return () => clearTimeout(timer)
-  // }, [id, duration, onShow])
+  // 页面加载后播放 FLIP 动画
+  useEffect(() => {
+    if(showMode !== 'observe') return
+
+    const timer = setTimeout(() => {
+      play(id, elRef.current, onShow, false, duration, animationType)
+    }, 0)
+    
+    return () => clearTimeout(timer)
+  }, [id, duration, onShow, showMode])
 
   // 获取当前元素位置
   const getRect = useCallback(() => {

@@ -1,4 +1,5 @@
 import { createContext, useContext } from 'react'
+import type { ShowMode } from 'src/types'
 
 export interface CloseAnimationItem {
   /** 获取元素当前位置 */
@@ -9,6 +10,7 @@ export interface CloseAnimationItem {
 }
 
 export interface ViewTransitionEndGroupContextValue {
+  showMode: ShowMode
   /** 开始动画持续时间(ms) */
   duration: number
   /** 结束动画持续时间(ms) */
