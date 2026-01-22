@@ -17,8 +17,7 @@ export interface ModalProps {
   /** 蒙版背景色（注：rgb格式） */
   bgColor?: string,
   alpha?: number,
-  /** 动画时长（ms） */
-  duration?: number,
+  /** 开始动画时长（ms） */
   durationIn?: number,
   /** 结束动画时长（注： 因关闭动画时，组件内部设置了动画完成回调隐藏当前组件， 所以当组件内部元素有动画时， 蒙版组件的结束动画最好设置为大于等于内容的动画时长，否则执行关闭动画时，出现蒙版组件和其插槽内容突然消失情况） */
   durationOut?: number
