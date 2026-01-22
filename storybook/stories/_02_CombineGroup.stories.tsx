@@ -53,13 +53,15 @@ function DemoComponent({
         modalRef.current?.show()
         startGroupRef.current?.captureAll()
 
-        setTimeout(() => {
-            console.log('showAll', endGroupRef.current.showAll)
-            endGroupRef.current?.showAll()
-        }, 200);
+
+        // 手动调用方式（现已经增加‘observe’模式， 跟随modal显示自动播放显示动画）
+        // setTimeout(() => {
+        //     console.log('showAll', endGroupRef.current?.showAll)
+        //     endGroupRef.current?.showAll()
+        // }, 0);
     }
 
-    
+
     const onClose = () => {
         setDetailTextVisible(false)
         modalRef.current?.close()
@@ -111,7 +113,7 @@ function DemoComponent({
                         <div onClick={onClose} className='absolute left-4 top-4 cursor-pointer text-34px text-gray-600'>×</div>
 
                         {/* 注：外层容器不应溢出截断，否则内容动画元素会被截断 */}
-                        <div className='left-[15%] w-[70%] top-[15%] h-[70vh]  mx-auto flex w-full h-full flex gap-4 absolute'>
+                        <div className='left-[15%] w-[70%] top-[15%] h-[70vh]  mx-auto flex w-full h-full flex absolute'>
                             <ViewTransitionEndGroup
                                 ref={endGroupRef}
                                 duration={duration}
@@ -124,25 +126,25 @@ function DemoComponent({
                                     </ViewTransitionEnd>
                                 </div>
 
-                                 {/* 注：外层容器不应溢出截断，否则内容动画元素会被截断 */}
-                                <div className='w-2/5 relative p-4 flex flex-col items-center justify-end'>
+                                {/* 注：外层容器不应溢出截断，否则内容动画元素会被截断 */}
+                                <div className='w-2/5 relative p-4 flex flex-col items-center'>
                                     <ViewTransitionEnd id={`title-${activeItem?.id}`} >
                                         <div className="min-h-48px w-full text-base font-semibold text-green-500 text-48px z-30 truncate">{activeItem?.title}</div>
                                     </ViewTransitionEnd>
 
-                                    <div className='w-full mt-4 overflow-hidden'>
+                                    <div className='w-full mt-4 overflow-hidden border border-solid border-red-500'>
                                         {/* TODO 省略号显示优化... */}
-                                    <div
-                                        className={
-                                            'w-full h-full leading-relaxed text-gray-800 transition-opacity duration-400 ease-out delay-100 ' +
-                                            (detailTextVisible ? 'opacity-100' : 'opacity-0')
-                                        }
-                                    >
-                                       This panel shows the selected item detail. Close to play the reverse FLIP animation.
-                                       This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.
-                                       This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.
-                                       This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.
-                                    </div>
+                                        <div
+                                            className={
+                                                'w-full h-full leading-relaxed text-gray-800 transition-opacity duration-400 ease-out delay-100 ' +
+                                                (detailTextVisible ? 'opacity-100' : 'opacity-0')
+                                            }
+                                        >
+                                            This panel shows the selected item detail. Close to play the reverse FLIP animation.
+                                            This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.
+                                            This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.
+                                            This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.This panel shows the selected item detail. Close to play the reverse FLIP animation.
+                                        </div>
                                     </div>
                                 </div>
                             </ViewTransitionEndGroup>
