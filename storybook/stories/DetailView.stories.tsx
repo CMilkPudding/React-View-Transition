@@ -73,8 +73,8 @@ function DemoComponent({ duration = 650, endDuration = 600 }: CompProps) {
   }
 
   return (
-    <div className="min-h-[100dvh] bg-gray-100">
-      <div className="min-h-[100dvh] bg-white flex flex-col w-full max-w-[480px] mx-auto">
+    <div className="h-[100dvh] bg-gray-100">
+      <div className="h-[100dvh] bg-white flex flex-col w-full max-w-[480px] mx-auto">
         <div className="h-14 flex items-center justify-center border-b border-gray-100 bg-gradient-to-b from-white to-gray-50 relative">
           <div className="absolute right-0 top-0 bottom-0 w-11 flex items-center justify-center text-gray-400" aria-hidden>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
