@@ -132,7 +132,7 @@ function DemoComponent({
                                         <div className="min-h-48px w-full text-base font-semibold text-green-500 text-48px z-30 truncate">{activeItem?.title}</div>
                                     </ViewTransitionEnd>
 
-                                    <div className='w-full mt-4 overflow-hidden border border-solid border-red-500'>
+                                    <div className='w-full mt-4 overflow-hidden'>
                                         {/* TODO 省略号显示优化... */}
                                         <div
                                             className={
