@@ -29,10 +29,17 @@ const ViewTransitionEndGroup = forwardRef<
 }, ref) {
   const transitions = useRef<Set<CloseAnimationItem>>(new Set())
 
-  // 注册 Item 的关闭动画
-  const register = useCallback((item: CloseAnimationItem) => {
+  // 注册 Item 的动画
+  const register = useCallback((item: CloseAnimationItem ) => {
     transitions.current.add(item)
     return () => transitions.current.delete(item)
+  }, [])
+
+  const showAll = useCallback(() => {
+    console.log('showAll')
+    transitions.current.forEach(item => {
+      item.show()
+    })
   }, [])
 
   // 触发所有 Item 关闭动画
@@ -61,6 +68,7 @@ const ViewTransitionEndGroup = forwardRef<
 
   // 暴露 closeAll 方法给父组件
   useImperativeHandle(ref, () => ({
+    showAll,
     closeAll
   }), [closeAll])
 
@@ -71,6 +79,7 @@ const ViewTransitionEndGroup = forwardRef<
         endDuration,
         register,
         closeAll,
+        showAll,
       }}
     >
       {children}

@@ -4,7 +4,8 @@ export interface CloseAnimationItem {
   /** 获取元素当前位置 */
   getRect: () => DOMRect | null
   /** 执行关闭动画，接收预先计算的位置 */
-  close: (lastRect?: DOMRect) => void
+  close: (lastRect?: DOMRect) => void,
+  show: () => void
 }
 
 export interface ViewTransitionEndGroupContextValue {
@@ -15,7 +16,8 @@ export interface ViewTransitionEndGroupContextValue {
   /** 注册关闭动画项 */
   register: (item: CloseAnimationItem) => () => void
   /** 触发所有 Item 关闭动画 */
-  closeAll: () => void
+  closeAll: () => void,
+  showAll: () => void
 }
 
 export const ViewTransitionEndGroupContext = createContext<ViewTransitionEndGroupContextValue | null>(null)

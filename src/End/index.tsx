@@ -6,6 +6,7 @@ import './index.scss'
 import type { AnimationType } from "./types"
 
 export type ViewTransitionEnRef = {
+  show: () => void
   close: () => void
 }
 
@@ -48,18 +49,24 @@ const ViewTransitionEnd = forwardRef<ViewTransitionEnRef, ViewTransitionEndProps
   const duration = group?.duration ?? propDuration ?? DEFAULT_ANIMATE_DURATION
   const endDuration = group?.endDuration ?? propEndDuration ?? DEFAULT_ANIMATE_DURATION
 
-  // 页面加载后播放 FLIP 动画
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      play(id, elRef.current, onShow, false, duration, animationType)
-    }, 0)
-    return () => clearTimeout(timer)
-  }, [id, duration, onShow])
+  // // 页面加载后播放 FLIP 动画
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     play(id, elRef.current, onShow, false, duration, animationType)
+  //   }, 0)
+  //   return () => clearTimeout(timer)
+  // }, [id, duration, onShow])
 
   // 获取当前元素位置
   const getRect = useCallback(() => {
     return elRef.current?.getBoundingClientRect() ?? null
   }, [])
+
+  const show = useCallback(() => {
+    if (!elRef.current) return
+
+    play(id, elRef.current, onShow, false, duration, animationType)
+  }, [id, duration])
 
   // 关闭动画回调
   const close = useCallback(() => {
@@ -72,13 +79,15 @@ const ViewTransitionEnd = forwardRef<ViewTransitionEnRef, ViewTransitionEndProps
     if (!group) return
     const unregister = group.register({
       getRect,
+      show,
       close
     })
     return unregister
-  }, [group, getRect, close])
+  }, [group, getRect, show, close])
 
   // 暴露 closeAll 方法给父组件
   useImperativeHandle(ref, () => ({
+    show,
     close
   }), [close])
 
