@@ -52,6 +52,11 @@ function DemoComponent({
         setDetailTextVisible(true)
         modalRef.current?.show()
         startGroupRef.current?.captureAll()
+
+        setTimeout(() => {
+            console.log('showAll', endGroupRef.current.showAll)
+            endGroupRef.current?.showAll()
+        }, 200);
     }
 
     
@@ -115,17 +120,17 @@ function DemoComponent({
                             >
                                 <div className="w-3/5 flex-grow-1 h-full">
                                     <ViewTransitionEnd id={activeItem?.id}>
-                                        <img className="rounded-xl w-full h-full object-cover" src={activeItem?.src} alt={activeItem?.title} />
+                                        <img className="rounded-xl w-full h-full object-cover opacity-0" src={activeItem?.src} alt={activeItem?.title} />
                                     </ViewTransitionEnd>
                                 </div>
 
                                  {/* 注：外层容器不应溢出截断，否则内容动画元素会被截断 */}
                                 <div className='w-2/5 relative p-4 flex flex-col items-center justify-end'>
                                     <ViewTransitionEnd id={`title-${activeItem?.id}`} >
-                                        <div className="min-h-48px max-w-[5/2] text-base font-semibold text-green-500 text-48px absolute top-0 right-0 z-30 truncate">{activeItem?.title}</div>
+                                        <div className="min-h-48px w-full text-base font-semibold text-green-500 text-48px z-30 truncate">{activeItem?.title}</div>
                                     </ViewTransitionEnd>
 
-                                    <div className='w-full h-[calc(100%-48px-20px)] overflow-hidden'>
+                                    <div className='w-full mt-4 overflow-hidden'>
                                         {/* TODO 省略号显示优化... */}
                                     <div
                                         className={

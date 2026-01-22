@@ -172,7 +172,7 @@ function DemoComponent({ duration = 650, endDuration = 600 }: CompProps) {
         {/* footer e */}
       </div>
 
-      <Modal ref={modalRef} clickClose={false} bgColor='0, 0, 0' alpha={0.9} durationIn={duration} durationOut={endDuration}>
+      <Modal ref={modalRef} clickClose={false} bgColor='0, 0, 0' alpha={0} durationIn={duration} durationOut={endDuration}>
         <div className="fixed inset-0 flex justify-center z-20">
           <div className="w-full max-w-[480px] h-[100dvh]  flex flex-col relative">
             <ViewTransitionEndGroup
