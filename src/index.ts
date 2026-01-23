@@ -12,3 +12,5 @@ export type { ViewTransitionEndGroupProps, ViewTransitionEndGroupRef } from './E
 export type { AnimationCallback } from './flip'
 export type { RectCache } from './flipCacheStore.ts'
 export type { CaptureMode } from './types'
+
+export { capture, play, clearCache } from './flip.ts'
