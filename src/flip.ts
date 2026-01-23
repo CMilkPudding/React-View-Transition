@@ -1,56 +1,17 @@
 import type { AnimationType } from "./types"
+import { flipCacheStore } from './flipCacheStore'
 
 /** 默认动画持续时间(ms) */
 export const DEFAULT_ANIMATE_DURATION = 500
 
-/** 缓存键名 */
-const CACHE_KEY = 'flipCache'
-
-export interface RectCache {
-  left: number
-  top: number
-  width: number
-  height: number
-  x: number
-  y: number,
-  fontSize?: number
-}
-
-type CacheMap = Record<string | number, RectCache>
-
-/** 获取缓存 */
-function getCache(): CacheMap {
-  if (typeof window === 'undefined') return {}
-  try {
-    const stored = sessionStorage.getItem(CACHE_KEY)
-    return stored ? JSON.parse(stored) : {}
-  } catch {
-    return {}
-  }
-}
-
-/** 设置缓存 */
-function setCache(cache: CacheMap): void {
-  if (typeof window === 'undefined') return
-  try {
-    sessionStorage.setItem(CACHE_KEY, JSON.stringify(cache))
-  } catch {
-    // ignore storage errors
-  }
-}
-
 /** 清除指定 key 的缓存 */
 export function clearCache(key?: string | number): void {
   if (key === undefined) {
-    sessionStorage.removeItem(CACHE_KEY)
+    flipCacheStore.getState().clearAll()
     return
   }
-  const cache = getCache()
-  delete cache[key]
-  setCache(cache)
+  flipCacheStore.getState().clearKey(key)
 }
-
-
 
 /**
  * 捕获元素位置信息
@@ -64,21 +25,18 @@ export function capture(key: string | number, el: HTMLElement | null): void {
   const computedStyle = window.getComputedStyle(el)
   const fontSize = parseFloat(computedStyle.fontSize) || undefined
 
-  // TODO ...rect 无法获取到值
+  // ! ...rect 无法获取到值
   console.log('capture', rect, { ...rect, fontSize })
 
-  const cache = getCache()
-  cache[key] = {
-    left: rect.left,
+  flipCacheStore.getState().updateKey(key, {
+    left: rect.x,
     top: rect.top,
     width: rect.width,
     height: rect.height,
     x: rect.x,
     y: rect.y,
-    fontSize
-  }
-  setCache(cache)
-
+    fontSize,
+  })
 }
 
 export type AnimationCallback = () => void
@@ -99,8 +57,7 @@ export function play(
   duration = DEFAULT_ANIMATE_DURATION,
   animationType: AnimationType = 'all'
 ): void {
-  const cache = getCache()
-  const first = cache[key]
+  const first = flipCacheStore.getState().cache[String(key)]
 
   // 初始和结束位置元素均不存在时，不处理任何操作
   if (!first && !el) return
@@ -112,8 +69,6 @@ export function play(
   }
 
   if (!el) return
-
-
 
   // 将目标元素透明度设置为0，避免初始闪烁
   el.style.setProperty('opacity', '0')
@@ -138,7 +93,6 @@ export function play(
     }
   }
 
-
   if (animationType === 'all' || animationType == 'font') {
     // 文字模式：仅变化字体大小和位置
     const computedStyle = window.getComputedStyle(el)
@@ -148,13 +102,10 @@ export function play(
     targetFontSize && el.style.setProperty("--target-font-size", targetFontSize + 'px');
   }
 
-  // 仅字体变化
-  if (animationType === 'font') {
-    el.style.animation = el.style.animation = isReverse ? `text_hide ${duration}ms forwards` : `text-show ${duration}ms forwards`;
-  } else {
-    // 所有变化 和 位置变化
-    el.style.animation = isReverse ? `fade_hide ${duration}ms forwards` : `fade_show ${duration}ms forwards`;
-  }
+  const aniName = animationType === 'font'
+    ? (isReverse ? 'text_hide' : 'text-show')
+    : (isReverse ? 'fade_hide' : 'fade_show')
+  el.style.animation = `${aniName} ${duration}ms forwards`
 
   // 动画结束回调
   const timer = setTimeout(() => {
