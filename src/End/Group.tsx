@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { useRef, useCallback, forwardRef, useImperativeHandle, useEffect, useState, useLayoutEffect } from 'react'
+import { useRef, useCallback, forwardRef, useImperativeHandle, useState, useLayoutEffect } from 'react'
 import { ViewTransitionEndGroupContext, type CloseAnimationItem } from './context'
 import { DEFAULT_ANIMATE_DURATION } from '../flip'
 import type { ShowMode } from 'src/types'
