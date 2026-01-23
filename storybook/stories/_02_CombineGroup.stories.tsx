@@ -11,6 +11,7 @@ import ViewTransitionEnd from '@/End'
 import ViewTransitionEndGroup from '@/End/Group'
 import type { ViewTransitionEndGroupRef } from '@/End/Group'
 import Modal, { ModalRef } from '../components/Modal';
+import clsx from 'clsx'
 
 type Item = {
     id: string
@@ -129,15 +130,17 @@ function DemoComponent({
                                 {/* 注：外层容器不应溢出截断，否则内容动画元素会被截断 */}
                                 <div className='w-2/5 relative p-4 flex flex-col items-center'>
                                     <ViewTransitionEnd id={`title-${activeItem?.id}`} >
-                                        <div className="min-h-48px w-full text-base font-semibold text-green-500 text-48px z-30 truncate">{activeItem?.title}</div>
+                                        <div className="flex-shrink-0 w-full text-base font-semibold text-green-500 text-32px z-30 truncate">{activeItem?.title}</div>
                                     </ViewTransitionEnd>
 
-                                    <div className='w-full mt-4 overflow-hidden'>
+                                    <div className='w-full h-full min-h-0 mt-4 overflow-hidden'>
                                         {/* TODO 省略号显示优化... */}
                                         <div
                                             className={
-                                                'w-full h-full leading-relaxed text-gray-800 transition-opacity duration-400 ease-out delay-100 ' +
-                                                (detailTextVisible ? 'opacity-100' : 'opacity-0')
+                                                clsx('leading-relaxed text-gray-800 transition-all duration-400 ease-out delay-100 overflow-hidden opacity-0',
+                                                    { 'opacity-100': detailTextVisible },
+                                                    { 'opacity-0': !detailTextVisible }
+                                                )
                                             }
                                         >
                                             This panel shows the selected item detail. Close to play the reverse FLIP animation.
