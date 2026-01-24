@@ -60,6 +60,7 @@ function DemoComponent({ duration = 650, endDuration = 600 }: CompProps) {
 
   const onShowDetail = (film: Film) => {
     setSelected(film)
+    setDetailTextVisible(true)
     modalRef.current?.show()
     startGroupRef.current?.captureAll()
   }
@@ -205,7 +206,7 @@ function DemoComponent({ duration = 650, endDuration = 600 }: CompProps) {
                 </ViewTransitionEnd>
 
 
-                <div className={clsx('mb-4 transition-all duration-200 ease-out opacity-0', {
+                <div className={clsx('mb-4 transition-all duration-200 ease-out', {
                   'opacity-100': detailTextVisible,
                   'opacity-0': !detailTextVisible
                 })}>

@@ -130,7 +130,7 @@ function DemoComponent({
                                 {/* 注：外层容器不应溢出截断，否则内容动画元素会被截断 */}
                                 <div className='w-2/5 relative p-4 flex flex-col items-center'>
                                     <ViewTransitionEnd id={`title-${activeItem?.id}`} >
-                                        <div className="flex-shrink-0 w-full text-base font-semibold text-green-500 text-32px z-30 truncate">{activeItem?.title}</div>
+                                        <div className="flex-shrink-0 w-full text-base font-semibold text-green-500 text-22px z-30 truncate">{activeItem?.title}</div>
                                     </ViewTransitionEnd>
 
                                     <div className='w-full h-full min-h-0 mt-4 overflow-hidden'>
