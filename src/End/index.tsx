@@ -1,5 +1,5 @@
 import type { ReactElement, Ref } from 'react'
-import { useEffect, useRef, useCallback, Children, isValidElement, cloneElement, forwardRef, useImperativeHandle } from 'react'
+import { useEffect, useRef, useCallback, Children, isValidElement, cloneElement, forwardRef, useImperativeHandle, useLayoutEffect } from 'react'
 import { play, DEFAULT_ANIMATE_DURATION } from '../flip'
 import { useViewTransitionEndGroup } from './context'
 import './index.scss'
@@ -55,14 +55,10 @@ const ViewTransitionEnd = forwardRef<ViewTransitionEnRef, ViewTransitionEndProps
   const endDuration = group?.endDuration ?? propEndDuration ?? DEFAULT_ANIMATE_DURATION
 
   // 页面加载后播放 FLIP 动画
-  useEffect(() => {
-    if(showMode !== 'observe') return
+  useLayoutEffect(() => {
+    if(showMode !== 'observe' || !id) return
 
-    const timer = setTimeout(() => {
-      play(id, elRef.current, onShow, false, duration, animationType)
-    }, 0)
-    
-    return () => clearTimeout(timer)
+    play(id, elRef.current, onShow, false, duration, animationType)
   }, [id, duration, onShow, showMode])
 
   // 获取当前元素位置

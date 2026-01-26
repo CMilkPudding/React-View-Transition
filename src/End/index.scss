@@ -1,15 +1,23 @@
 @keyframes fade_show {
-  from {
-    width: var(--origin-width, 50px);
-    height: var(--origin-height, 50px);
+  0% {
+    width: var(--origin-width);
+    height: var(--origin-height);
     transform: translate(var(--tX), var(--tY));
     font-size: var(--origin-font-size, inherit);
     opacity: 0;
   }
 
-  to {
-    width: var(--target-width, 100px);
-    height: var(--target-height, 100px);
+  1% {
+    width: var(--origin-width);
+    height: var(--origin-height);
+    transform: translate(var(--tX), var(--tY));
+    font-size: var(--origin-font-size, inherit);
+    opacity: 1; 
+  }
+
+  100% {
+    width: var(--target-width);
+    height: var(--target-height);
     font-size: var(--target-font-size, inherit);
     transform: translate(0, 0);
     opacity: 1;
@@ -18,16 +26,16 @@
 
 @keyframes fade_hide {
   from {
-    width: var(--target-width, 100px);
-    height: var(--target-height, 100px);
+    width: var(--target-width);
+    height: var(--target-height);
     transform: translate(0, 0);
     font-size: var(--target-font-size, inherit);
     opacity: 1;
   }
 
   to {
-    width: var(--origin-width, 50px);
-    height: var(--origin-height, 50px);
+    width: var(--origin-width);
+    height: var(--origin-height);
     font-size: var(--origin-font-size, inherit);
     transform: translate(var(--tX), var(--tY));
     opacity: 0;
