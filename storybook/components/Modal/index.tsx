@@ -24,7 +24,7 @@ export interface ModalProps {
 }
 
 export default function Modal(props: ModalProps) {
-  const { onClose, children, ref, clickClose, bgColor, alpha, duration, durationIn, durationOut } = props
+  const { onClose, children, ref, clickClose, bgColor, alpha, durationIn, durationOut } = props
   const [show, setShow] = useState(false)
   const [display, setDisplay] = useState(false)
 
@@ -70,9 +70,8 @@ export default function Modal(props: ModalProps) {
       style={{
         '--bg-color': bgColor,
         '--bg-alpha': alpha,
-        '--duration': duration ? duration + 'ms' : '',
-        '--duration-in': durationIn ? durationIn + 'ms' : '',
-        '--duration-out': durationOut ? durationOut + 'ms' : '',
+        '--duration-in': durationIn ? durationIn + 'ms' : 400 + 'ms',
+        '--duration-out': durationOut ? durationOut + 'ms' : 400 + 'ms',
       }}
     >{children}</div>, document.body
   )
