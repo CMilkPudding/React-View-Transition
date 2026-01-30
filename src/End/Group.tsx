@@ -55,6 +55,7 @@ const ViewTransitionEndGroup = forwardRef<
 
   // 触发所有 Item 关闭动画
   const closeAll = useCallback(() => {
+    console.log('closeAll', transitions)
     // 1. 先收集所有元素的当前位置（在任何动画开始前）
     const rectsMap = new Map<CloseAnimationItem, DOMRect | null>()
     transitions.current.forEach(item => {
@@ -63,10 +64,7 @@ const ViewTransitionEndGroup = forwardRef<
 
     // 2. 然后使用预先收集的位置启动所有动画
     transitions.current.forEach(item => {
-      const lastRect = rectsMap.get(item)
-      if (lastRect) {
-        item.close(lastRect)
-      }
+     item.close()
     })
 
     // 等待动画结束后触发 onClosed
