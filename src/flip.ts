@@ -25,9 +25,7 @@ export function capture(key: string | number, el: HTMLElement | null): void {
   const computedStyle = window.getComputedStyle(el)
   const fontSize = parseFloat(computedStyle.fontSize) || undefined
 
-  // ! ...rect 无法获取到值
-  console.log('capture', rect, { ...rect, fontSize })
-
+  // !注：因为getBoundingClientRect()获取到的属性不可枚举，故直接展开{...rect}无法获取到值
   flipCacheStore.getState().updateKey(key, {
     left: rect.x,
     top: rect.top,
