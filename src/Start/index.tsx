@@ -1,14 +1,19 @@
 import type { ReactElement, MouseEvent, Ref } from 'react'
-import { useEffect, useRef, Children, useLayoutEffect, isValidElement, cloneElement, useCallback } from 'react'
+import { useEffect, useRef, Children, useLayoutEffect, isValidElement, cloneElement, useCallback, forwardRef, useImperativeHandle } from 'react'
 import { capture } from '../flip'
 import { validateId } from '../utils'
 import { useViewTransitionStartGroup } from './context'
 import type { CaptureMode } from '../types'
 
+export type ViewTransitionStartRef = {
+  capture: () => void
+}
+
 interface ChildProps {
   ref?: Ref<HTMLElement>
   onClick?: (e: MouseEvent<HTMLElement>) => void
 }
+
 
 export interface ViewTransitionStartProps {
   /** 子元素，仅支持单个根元素 */
@@ -22,13 +27,12 @@ export interface ViewTransitionStartProps {
 }
 
 
-
-export default function ViewTransitionStart({
+const ViewTransitionStart = forwardRef<ViewTransitionStartRef, ViewTransitionStartProps>(function ViewTransitionStart({
   children,
   id,
   mode: propMode,
   onClick: propOnClick,
-}: ViewTransitionStartProps) {
+}: ViewTransitionStartProps, ref) {
   const elRef = useRef<HTMLElement>(null)
   const group = useViewTransitionStartGroup()
 
@@ -40,16 +44,20 @@ export default function ViewTransitionStart({
 
   // 捕获当前元素位置 - 使用稳定的函数引用
   const capturePosition = useCallback(() => {
-    if (elRef.current) {
-      validateId(id)
-      capture(id, elRef.current)
-    }
-  }, [id])
+    if(!elRef.current|| !id) return
+
+    validateId(id)
+    capture(id, elRef.current)
+  }, [mode])
 
   // 注册到 Group
   useEffect(() => {
     if (!group) return
-    const unregister = group.register(capturePosition)
+
+    const unregister = group.register({
+      capture: capturePosition
+    })
+
     return unregister
   }, [group, capturePosition])
 
@@ -100,35 +108,30 @@ export default function ViewTransitionStart({
     }
   }, [mode, id])
 
+
+// 暴露 closeAll 方法给父组件
+  useImperativeHandle(ref, () => ({
+    capture: capturePosition
+  }), [ capturePosition ])
+  
   // 克隆 child 并注入 ref 和 onClick
   const childWithRef = isValidElement(children)
     ? cloneElement(children, {
       ref: elRef,
       onClick: (e: MouseEvent<HTMLElement>) => {
-        console.log('start inner click')
+        
         // 1. click 模式下捕获位置
         if (mode === 'click' && !group) {
-          // 非 Group 模式，自己捕获
-          validateId(id)
-          capture(id, e.currentTarget)
+          capturePosition()
         }
-
-        if (group?.onClick) {
-          // 4. 调用 Group 的 onClick（会触发 captureAll）
-          group?.onClick?.(e)
-          return
-        }
-
-        // 2. 调用 children 原本的 onClick
-        children.props.onClick?.(e)
 
         // 3. 调用外部传入的 onClick
         propOnClick?.(e)
-
-
       }
     })
     : children
 
   return childWithRef
-}
+})
+
+export default ViewTransitionStart

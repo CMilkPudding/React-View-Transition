@@ -1,6 +1,6 @@
 import type { ReactNode, MouseEvent } from 'react'
 import { useRef, useCallback, forwardRef, useImperativeHandle } from 'react'
-import { ViewTransitionStartGroupContext } from './context'
+import { ViewTransitionStartGroupContext, type ViewTransitionStartItem } from './context'
 import type { CaptureMode } from '../types'
 
 export type ViewTransitionStartGroupRef = {
@@ -18,26 +18,24 @@ const ViewTransitionStartGroup = forwardRef<ViewTransitionStartGroupRef, ViewTra
   children,
   mode = 'click',
 }: ViewTransitionStartGroupProps, ref) {
-  const captureFns = useRef<Set<() => void>>(new Set())
+  // 收集子组件
+  const transitions = useRef<Set<ViewTransitionStartItem>>(new Set())
 
   // 注册 Item 的 capture 函数
-  const register = useCallback((captureFn: () => void) => {
-    captureFns.current.add(captureFn)
-    return () => captureFns.current.delete(captureFn)
+  const register = useCallback((item:ViewTransitionStartItem) => {
+    if(!item) return
+
+    transitions.current.add(item)
+    
+    return () => transitions.current.delete(item)
   }, [])
 
   // 触发所有 Item 捕获位置
   const captureAll = useCallback(() => {
-    captureFns.current.forEach(fn => fn())
+    transitions.current.forEach(item => {
+      item?.capture()
+    })
   }, [])
-
-  // 处理点击事件：先捕获所有位置，再触发外部 onClick
-  const handleClick = useCallback((e: MouseEvent<HTMLElement>) => {
-    if (mode === 'click') {
-      captureAll()
-    }
-
-  }, [mode, captureAll])
 
   // 暴露 方法给父组件
   useImperativeHandle(ref, () => ({
@@ -48,7 +46,6 @@ const ViewTransitionStartGroup = forwardRef<ViewTransitionStartGroupRef, ViewTra
     <ViewTransitionStartGroupContext.Provider
       value={{
         mode,
-        onClick: handleClick,
         register,
       }}
     >
