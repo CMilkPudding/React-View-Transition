@@ -9,9 +9,10 @@ import ViewTransitionEndGroup from '@/End/Group'
 import type { ViewTransitionEndGroupRef } from '@/End/Group'
 import Modal, { ModalRef } from '../components/Modal';
 import clsx from 'clsx'
+import { v4 as uuid } from 'uuid'
 
 type Film = {
-  id: number
+  id: number | string
   title: string
   subtitle: string
   likes: number
@@ -22,6 +23,7 @@ type CompProps = {
   duration?: number
   endDuration?: number
 }
+
 
 function DemoComponent({ duration = 650, endDuration = 600 }: CompProps) {
   const films = useMemo<Film[]>(
@@ -55,17 +57,22 @@ function DemoComponent({ duration = 650, endDuration = 600 }: CompProps) {
   const [detailTextVisible, setDetailTextVisible] = useState(false)
 
   const modalRef = useRef<ModalRef>(null)
-  const startGroupRef = useRef<ViewTransitionStartGroupRef>(null)
+  const startGroupRefs = useRef<Record<string, ViewTransitionStartGroupRef | null>>({})
   const endGroupRef = useRef<ViewTransitionEndGroupRef>(null)
 
   const onShowDetail = (film: Film) => {
     setSelected(film)
-    setDetailTextVisible(true)
+
+    startGroupRefs.current?.[film.id].captureAll()
+
     modalRef.current?.show()
-    startGroupRef.current?.captureAll()
+    endGroupRef.current?.showAll()
+
+    setDetailTextVisible(true)
   }
   const onClose = () => {
     setDetailTextVisible(false)
+
     modalRef.current?.close()
     endGroupRef.current?.closeAll()
   }
@@ -82,18 +89,18 @@ function DemoComponent({ duration = 650, endDuration = 600 }: CompProps) {
           <div className="px-3 pb-4 space-y-3">
             {films.map((film) => (
               <div key={film.id} className="bg-white overflow-hidden border border-gray-100 shadow-sm" onClick={() => onShowDetail(film)}>
-                <ViewTransitionStartGroup ref={startGroupRef} mode="click">
+                <ViewTransitionStartGroup ref={(r: any) => { startGroupRefs.current[film.id] = r }} mode="click">
                   <div className="cursor-pointer relative h-[28vh]">
-                    <ViewTransitionStart id={`poster-${film.id}`}>
+                    <ViewTransitionStart id={`card-img-${film.id}`}>
                       <img className="w-full h-full object-cover" src={film.image} alt={film.title} />
                     </ViewTransitionStart>
 
                     <div className="px-3 pt-2 pb-3 space-y-1.5 absolute left-0 top-0 bottom-0 right-0 text-white bg-dark-900 bg-opacity-50 flex flex-col justify-end">
-                      <ViewTransitionStart id={`sub-title-${film.id}`}>
+                      <ViewTransitionStart id={`card-sub-title-${film.id}`}>
                         <div className="text-xs text-gray-300">{film.subtitle}</div>
                       </ViewTransitionStart>
 
-                      <ViewTransitionStart id={`title-${film.id}`}>
+                      <ViewTransitionStart id={`card-title-${film.id}`}>
                         <div className="text-sm font-extrabold leading-tight">
                           {film.title}
                         </div>
@@ -182,11 +189,14 @@ function DemoComponent({ duration = 650, endDuration = 600 }: CompProps) {
               endDuration={endDuration}
               onClosed={onClosed}
             >
-              <ViewTransitionEnd id={`poster-${selected?.id}`}>
+              <ViewTransitionEnd id={`card-img-${selected?.id}`}>
                 <img className="w-full h-full object-cover" src={selected?.image} alt={selected?.title} />
               </ViewTransitionEnd>
 
-              <div className="absolute top-0 left-0 right-0 bottom-0 bg-dark-900 bg-opacity-50 p-4 flex flex-col justify-end box-border">
+              <div className={clsx('absolute top-0 left-0 right-0 bottom-0 bg-black bg-opacity-90 p-4 flex flex-col justify-end box-border transition-opacity duration-400 ease-out', {
+                'opacity-100': detailTextVisible,
+                'opacity-0': !detailTextVisible
+              })}>
                 {/* 关闭按钮 s */}
                 <div
                   className="w-11 h-14 flex items-center justify-center text-white cursor-pointer select-none absolute top-0 left-0 z-20"
@@ -197,11 +207,10 @@ function DemoComponent({ duration = 650, endDuration = 600 }: CompProps) {
                   </svg>
                 </div>
                 {/* 关闭按钮 e */}
-
-                <ViewTransitionEnd id={`title-${selected?.id}`}>
+                <ViewTransitionEnd id={`card-title-${selected?.id}`}>
                   <div className="text-lg font-extrabold leading-snug text-white">{selected?.title}</div>
                 </ViewTransitionEnd>
-                <ViewTransitionEnd id={`sub-title-${selected?.id}`}>
+                <ViewTransitionEnd id={`card-sub-title-${selected?.id}`}>
                   <div className="mt-1 text-xs text-gray-300">{selected?.subtitle}</div>
                 </ViewTransitionEnd>
 
@@ -252,8 +261,8 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
   name: 'List2Detail',
   args: {
-    duration: 800,
-    endDuration: 500,
+    duration: 8000,
+    endDuration: 5000,
   },
 }
 

@@ -56,15 +56,17 @@ function DemoComponent({ duration = 650, endDuration = 600 }: CompProps) {
   const [isShow, setIsShow] = useState(false)
 
   const modalRef = useRef<ModalRef>(null)
-  const startGroupRef = useRef<ViewTransitionStartGroupRef>(null)
+  const startGroupRefs = useRef<Record<string, ViewTransitionStartGroupRef | null>>({})
   const endGroupRef = useRef<ViewTransitionEndGroupRef>(null)
 
 
   const openDetail = (film: Film) => {
     setIsShow(true)
     setSelected(film)
+    startGroupRefs.current[film.id]?.captureAll()
+
     modalRef.current?.show()
-    startGroupRef.current?.captureAll()
+   
   }
   const closeDetail = () => {
     setIsShow(false)
@@ -96,48 +98,46 @@ function DemoComponent({ duration = 650, endDuration = 600 }: CompProps) {
                   {idx === 0 ? 'Brad H. and 14 others like' : 'Michael Y. and Joe A. like'}
                 </div>
 
-                <ViewTransitionStartGroup ref={startGroupRef} mode="click">
-                  <ViewTransitionStart id={`card-${film.id}`}>
-                    <div className="cursor-pointer">
-                      <ViewTransitionStart id={`poster-${film.id}`}>
-                        <img className="w-full h-40 object-cover" src={film.image} alt={film.title} />
+                <ViewTransitionStartGroup  ref={(r: any) => { startGroupRefs.current[film.id] = r }} mode="click">
+                  <div className="cursor-pointer">
+                    <ViewTransitionStart id={`poster-${film.id}`}>
+                      <img className="w-full h-40 object-cover" id={film.id} src={film.image} alt={film.title} />
+                    </ViewTransitionStart>
+
+                    <div className="px-3 pt-2 pb-3 space-y-1.5">
+                      <ViewTransitionStart id={`title-${film.id}`}>
+                        <div className="text-sm font-extrabold leading-tight text-gray-900">
+                          {film.title}
+                        </div>
                       </ViewTransitionStart>
 
-                      <div className="px-3 pt-2 pb-3 space-y-1.5">
-                        <ViewTransitionStart id={`title-${film.id}`}>
-                          <div className="text-sm font-extrabold leading-tight text-gray-900">
-                            {film.title}
-                          </div>
-                        </ViewTransitionStart>
+                      <div className="text-xs text-gray-500">{film.subtitle}</div>
 
-                        <div className="text-xs text-gray-500">{film.subtitle}</div>
-
-                        <div className="flex items-center justify-between pt-1">
-                          <div className="flex items-center gap-1.5 text-xs text-gray-500">
-                            <span>{film.likes}</span>
-                            <span className="w-4 h-4 flex items-center justify-center text-gray-300" aria-hidden>
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                  d="M12 21s-7-4.6-9.3-8.4C.4 9.2 2.2 5.5 6 5.2c2-.2 3.4.8 4.2 1.8.8-1 2.2-2 4.2-1.8 3.8.3 5.6 4 3.3 7.4C19 16.4 12 21 12 21Z"
-                                  stroke="currentColor"
-                                  strokeWidth="1.6"
-                                  strokeLinejoin="round"
-                                />
-                              </svg>
-                            </span>
-                          </div>
-
-                          <div className="w-4 h-4 flex items-center justify-center text-gray-300" aria-hidden>
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M6 12h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-                              <path d="M6 6h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-                              <path d="M6 18h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                      <div className="flex items-center justify-between pt-1">
+                        <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                          <span>{film.likes}</span>
+                          <span className="w-4 h-4 flex items-center justify-center text-gray-300" aria-hidden>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path
+                                d="M12 21s-7-4.6-9.3-8.4C.4 9.2 2.2 5.5 6 5.2c2-.2 3.4.8 4.2 1.8.8-1 2.2-2 4.2-1.8 3.8.3 5.6 4 3.3 7.4C19 16.4 12 21 12 21Z"
+                                stroke="currentColor"
+                                strokeWidth="1.6"
+                                strokeLinejoin="round"
+                              />
                             </svg>
-                          </div>
+                          </span>
+                        </div>
+
+                        <div className="w-4 h-4 flex items-center justify-center text-gray-300" aria-hidden>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6 12h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                            <path d="M6 6h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                            <path d="M6 18h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                          </svg>
                         </div>
                       </div>
                     </div>
-                  </ViewTransitionStart>
+                  </div>
                 </ViewTransitionStartGroup>
               </div>
             ))}

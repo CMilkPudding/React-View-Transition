@@ -45,14 +45,14 @@ function DemoComponent({
     const [detailTextVisible, setDetailTextVisible] = useState(false)
 
     const modalRef = useRef<ModalRef>(null)
-    const startGroupRef = useRef<ViewTransitionStartGroupRef>(null)
+    const startGroupRefs = useRef<Record<string, ViewTransitionStartGroupRef | null>>({})
     const endGroupRef = useRef<ViewTransitionEndGroupRef>(null)
 
     const onSelect = (item: Item) => {
         setActiveItem(item)
         setDetailTextVisible(true)
         modalRef.current?.show()
-        startGroupRef.current?.captureAll()
+        startGroupRefs.current?.[item.id].captureAll()
 
 
         // 手动调用方式（现已经增加‘observe’模式， 跟随modal显示自动播放显示动画）
@@ -87,9 +87,8 @@ function DemoComponent({
                     <div className={`flex-1 overflow-auto p-4 ${noScrollbar}`}>
                         <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(200px,1fr))]">
                             {items.map((item) => (
-                                <div key={item.id} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden" onClick={() => onSelect(item)}>
-                                    <ViewTransitionStartGroup ref={startGroupRef} mode="click" >
-                                        {/* <ViewTransitionStart id={`card-${item.id}`}> */}
+                                <div key={item.id} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden" onClick={() => onSelect(item)}> 
+                                    <ViewTransitionStartGroup ref={(r: any) => { startGroupRefs.current[item.id] = r }} mode="click" >
                                         <div className="cursor-pointer">
                                             <ViewTransitionStart id={item.id}>
                                                 <img className="w-full h-36 object-cover" src={item.src} alt={item.title} />
@@ -101,7 +100,6 @@ function DemoComponent({
                                                 <div className="mt-0.5 text-xs text-gray-400">Tap to open</div>
                                             </div>
                                         </div>
-                                        {/* </ViewTransitionStart> */}
                                     </ViewTransitionStartGroup>
                                 </div>
                             ))}
