@@ -68,7 +68,10 @@ function DemoComponent({ duration = 650, endDuration = 600 }: CompProps) {
     modalRef.current?.show()
     endGroupRef.current?.showAll()
 
-    setDetailTextVisible(true)
+    // 延迟显示文字，让过渡动画生效
+    setTimeout(() => {
+      setDetailTextVisible(true)
+    }, 50)
   }
   const onClose = () => {
     setDetailTextVisible(false)
@@ -193,7 +196,7 @@ function DemoComponent({ duration = 650, endDuration = 600 }: CompProps) {
                 <img className="w-full h-full object-cover" src={selected?.image} alt={selected?.title} />
               </ViewTransitionEnd>
 
-              <div className={clsx('absolute top-0 left-0 right-0 bottom-0 bg-black bg-opacity-90 p-4 flex flex-col justify-end box-border transition-opacity duration-400 ease-out', {
+              <div className={clsx('absolute top-0 left-0 right-0 bottom-0 bg-black bg-opacity-50 p-4 flex flex-col justify-end box-border transition-opacity duration-400 ease-out', {
                 'opacity-100': detailTextVisible,
                 'opacity-0': !detailTextVisible
               })}>
@@ -215,7 +218,7 @@ function DemoComponent({ duration = 650, endDuration = 600 }: CompProps) {
                 </ViewTransitionEnd>
 
 
-                <div className={clsx('mb-4 transition-all duration-200 ease-out', {
+                <div className={clsx('mb-4 transition-all duration-800 ease-out', {
                   'opacity-100': detailTextVisible,
                   'opacity-0': !detailTextVisible
                 })}>
@@ -261,8 +264,8 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
   name: 'List2Detail',
   args: {
-    duration: 8000,
-    endDuration: 5000,
+    duration: 800,
+    endDuration: 500,
   },
 }
 

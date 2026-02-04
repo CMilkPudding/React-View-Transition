@@ -50,9 +50,12 @@ function DemoComponent({
 
     const onSelect = (item: Item) => {
         setActiveItem(item)
-        setDetailTextVisible(true)
         modalRef.current?.show()
         startGroupRefs.current?.[item.id].captureAll()
+        // 延迟显示文字，让过渡动画生效
+        setTimeout(() => {
+            setDetailTextVisible(true)
+        }, 50)
 
 
         // 手动调用方式（现已经增加‘observe’模式， 跟随modal显示自动播放显示动画）
@@ -135,7 +138,7 @@ function DemoComponent({
                                         {/* TODO 省略号显示优化... */}
                                         <div
                                             className={
-                                                clsx('leading-relaxed text-gray-800 transition-all duration-400 ease-out delay-100 overflow-hidden opacity-0',
+                                                clsx('leading-relaxed text-gray-800 transition-all duration-800 ease-out delay-100 overflow-hidden',
                                                     { 'opacity-100': detailTextVisible },
                                                     { 'opacity-0': !detailTextVisible }
                                                 )
