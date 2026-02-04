@@ -1,0 +1,209 @@
+import { Meta, Canvas, Story, Controls } from '@storybook/addon-docs/blocks';
+import * as Stories from './index.stories';
+
+<Meta of={Stories} />
+
+# ViewTransitionEnd 组件
+
+## 简介
+
+`ViewTransitionEnd` 是一个 **视图过渡动画的结束位置组件**，与 `ViewTransitionStart` 配合使用，实现 **FLIP 动画效果**。
+
+它的核心职责是：读取 `ViewTransitionStart` 捕获的起始位置，计算与当前位置的差值，并 **播放过渡动画**。
+
+---
+
+## 何时使用 ViewTransitionEnd？
+
+- 需要 **播放从起始位置到结束位置** 的过渡动画
+- 与 `ViewTransitionStart` 通过 **相同的 `id`** 建立关联
+- 需要被 `ViewTransitionEndGroup` **批量管理**
+- 实现弹窗展开、详情页过渡、图片预览等 **动画场景**
+
+---
+
+## 核心概念
+
+### 1. FLIP 动画原理
+
+FLIP = **F**irst, **L**ast, **I**nvert, **P**lay
+
+```
+First  → ViewTransitionStart 捕获的起始位置
+Last   → ViewTransitionEnd 渲染后的最终位置
+Invert → 计算位置差值，将元素"反向移动"到起始位置
+Play   → 播放动画，从起始位置过渡到最终位置
+```
+
+### 2. 显示模式 (showMode)
+
+<table>
+  <thead>
+    <tr>
+      <th>模式</th>
+      <th>触发时机</th>
+      <th>适用场景</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>observe</code></td>
+      <td>组件挂载后自动播放</td>
+      <td>常规场景（默认）</td>
+    </tr>
+    <tr>
+      <td><code>call</code></td>
+      <td>需要手动调用 <code>show()</code></td>
+      <td>需要精确控制动画时机</td>
+    </tr>
+  </tbody>
+</table>
+
+### 3. 动画类型 (animationType)
+
+<table>
+  <thead>
+    <tr>
+      <th>类型</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>all</code></td>
+      <td>同时动画位置和字体大小（默认）</td>
+    </tr>
+    <tr>
+      <td><code>position</code></td>
+      <td>仅动画位置变化</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+## 基础用法
+
+<Canvas of={Stories.Basic} />
+
+---
+
+## Props
+
+<Controls />
+
+---
+
+## Ref Methods
+
+<table>
+  <thead>
+    <tr>
+      <th>方法</th>
+      <th>类型</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>show()</code></td>
+      <td><code>() =&gt; void</code></td>
+      <td>手动触发显示动画（showMode="call" 时使用）</td>
+    </tr>
+    <tr>
+      <td><code>close()</code></td>
+      <td><code>() =&gt; void</code></td>
+      <td>手动触发关闭动画（反向播放回起始位置）</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+## 动画配置示例
+
+### 动画类型
+
+不同 `animationType` 的效果对比：
+
+<Canvas of={Stories.AnimationType} />
+
+### 显示模式
+
+`observe` vs `call` 模式的区别：
+
+<Canvas of={Stories.ShowMode} />
+
+---
+
+## 与其他组件的关系
+
+> `ViewTransitionEnd` 是动画的「播放器」，  
+> 它依赖 `ViewTransitionStart` 提供的起始位置信息。
+
+<table>
+  <thead>
+    <tr>
+      <th>组件</th>
+      <th>角色</th>
+      <th>关系</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>ViewTransitionStart</code></td>
+      <td>位置提供者</td>
+      <td>通过 <code>id</code> 关联，提供起始位置</td>
+    </tr>
+    <tr>
+      <td><code>ViewTransitionEndGroup</code></td>
+      <td>批量管理器</td>
+      <td>统一管理多个 End 的动画配置和批量操作</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+## 动画时序
+
+```
+1. ViewTransitionStart 捕获位置 (capture)
+        ↓
+2. 打开目标视图（如弹窗）
+        ↓
+3. ViewTransitionEnd 挂载
+        ↓
+4. 播放显示动画 (duration ms)
+        ↓
+5. 用户交互...
+        ↓
+6. 调用 close() 播放关闭动画 (endDuration ms)
+        ↓
+7. 触发 onClosed 回调
+```
+
+---
+
+## 典型使用模式
+
+```tsx
+const endRef = useRef<ViewTransitionEnRef>(null)
+
+// 关闭时播放反向动画
+const handleClose = () => {
+  endRef.current?.close()
+}
+
+<ViewTransitionEnd
+  ref={endRef}
+  id="item-1"           // 与 Start 的 id 对应
+  duration={800}        // 显示动画时长
+  endDuration={600}     // 关闭动画时长
+  onClosed={handleClosed}
+>
+  <img src="..." />
+</ViewTransitionEnd>
+```
+
+👉 请参考「组合示例」章节了解完整的 Start + End 协同使用

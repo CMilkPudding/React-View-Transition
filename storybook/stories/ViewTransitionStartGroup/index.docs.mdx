@@ -1,0 +1,186 @@
+import { Meta, Canvas, Story, Controls } from '@storybook/addon-docs/blocks';
+import * as Stories from './index.stories';
+
+<Meta of={Stories} />
+
+# ViewTransitionStartGroup 组件
+
+## 简介
+
+`ViewTransitionStartGroup` 是一个 **视图过渡动画起始位置的分组容器**，用于 **批量管理多个 `ViewTransitionStart` 组件**。
+
+它主要解决的问题是：当页面中有 **多个需要过渡的元素** 时，提供 **统一的模式配置** 和 **批量捕获能力**。
+
+---
+
+## 何时使用 ViewTransitionStartGroup？
+
+- 有 **多个 `ViewTransitionStart`** 需要统一管理
+- 需要 **一次性捕获多个元素** 的位置信息
+- 需要统一配置组内所有元素的 **捕获模式**
+- 实现 **卡片网格、图片画廊、列表** 等场景
+
+---
+
+## 核心概念
+
+### 1. 分组管理
+
+`ViewTransitionStartGroup` 会自动收集其子树中所有的 `ViewTransitionStart` 组件，并提供批量操作能力。
+
+### 2. 模式继承
+
+组内的 `ViewTransitionStart` 会 **继承 Group 的 `mode` 配置**，无需单独设置。
+
+```tsx
+// Group 设置 mode="observe"，组内所有 Start 自动使用 observe 模式
+<ViewTransitionStartGroup mode="observe">
+  <ViewTransitionStart id="item-1">...</ViewTransitionStart>
+  <ViewTransitionStart id="item-2">...</ViewTransitionStart>
+</ViewTransitionStartGroup>
+```
+
+### 3. 批量捕获
+
+通过 ref 调用 `captureAll()` 可以一次性捕获组内所有元素的位置：
+
+```tsx
+const groupRef = useRef<ViewTransitionStartGroupRef>(null)
+
+// 批量捕获
+groupRef.current?.captureAll()
+```
+
+---
+
+## 基础用法
+
+### 单个 Group 用法
+
+单个 `ViewTransitionStartGroup` 管理多个过渡元素（如一个卡片内的图片和标题）：
+
+<Canvas of={Stories.Basic} />
+
+### 列表中使用（推荐）
+
+在列表场景中，**推荐每个列表项创建一个 `ViewTransitionStartGroup`**，点击时只捕获该项内的元素：
+
+<Canvas of={Stories.ListUsage} />
+
+### 视图切换场景（特定场景）
+
+当需要实现 **Grid/List 视图切换** 或 **排序动画** 等场景时，可使用单个 Group 包裹整个列表：
+
+<Canvas of={Stories.SingleGroupList} />
+
+> ⚠️ **性能注意**：此用法会一次性捕获列表中所有元素位置。**长列表（100+ 项）可能导致性能问题**。
+>
+> **适用场景**：
+> - Grid/List 视图切换
+> - 列表排序动画
+> - 少量固定元素的批量操作
+>
+> **不适用场景**：
+> - 长列表点击跳转详情
+> - 需要频繁触发捕获的交互
+
+> 💡 **完整案例**：上方示例仅展示位置捕获，未结合 `ViewTransitionEndGroup` 实现完整过渡动画。  
+> 👉 查看完整 Grid/List 切换案例：[GoodsListChange 示例](?path=/story/examples-viewtransition-listchange--default)
+
+---
+
+## Props
+
+<Controls />
+
+---
+
+## Ref Methods
+
+<table>
+  <thead>
+    <tr>
+      <th>方法</th>
+      <th>类型</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>captureAll()</code></td>
+      <td><code>() =&gt; void</code></td>
+      <td>批量捕获组内所有元素的位置</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+## 模式示例
+
+### Click 模式
+
+点击某个元素时，批量捕获组内所有元素的位置：
+
+<Canvas of={Stories.ClickMode} />
+
+### Observe 模式
+
+滚动时自动捕获可见元素位置：
+
+<Canvas of={Stories.ObserveMode} />
+
+---
+
+## 与其他组件的关系
+
+> `ViewTransitionStartGroup` 是 `ViewTransitionStart` 的「管理容器」，  
+> 它不直接参与动画，而是提供批量管理能力。
+
+<table>
+  <thead>
+    <tr>
+      <th>组件</th>
+      <th>角色</th>
+      <th>关系</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>ViewTransitionStart</code></td>
+      <td>子单元</td>
+      <td>被 Group 收集和管理</td>
+    </tr>
+    <tr>
+      <td><code>ViewTransitionEndGroup</code></td>
+      <td>对应的 End 管理器</td>
+      <td>通常成对使用，Start 侧用 StartGroup，End 侧用 EndGroup</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+## 典型使用模式
+
+```tsx
+// 1. 创建 ref
+const startGroupRef = useRef<ViewTransitionStartGroupRef>(null)
+
+// 2. 点击时批量捕获
+const handleClick = (item) => {
+  startGroupRef.current?.captureAll()  // 捕获所有位置
+  openDetail(item)                      // 打开详情
+}
+
+// 3. 渲染
+<ViewTransitionStartGroup ref={startGroupRef} mode="click">
+  {items.map(item => (
+    <ViewTransitionStart key={item.id} id={item.id} onClick={() => handleClick(item)}>
+      <Card>{item.content}</Card>
+    </ViewTransitionStart>
+  ))}
+</ViewTransitionStartGroup>
+```
+
+👉 请参考「组合示例」章节了解与 `ViewTransitionEndGroup` 的协同使用

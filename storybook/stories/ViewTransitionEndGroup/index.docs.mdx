@@ -1,0 +1,246 @@
+import { Meta, Canvas, Story, Controls } from '@storybook/addon-docs/blocks';
+import * as Stories from './index.stories';
+
+<Meta of={Stories} />
+
+# ViewTransitionEndGroup 组件
+
+## 简介
+
+`ViewTransitionEndGroup` 是一个 **视图过渡动画结束位置的分组容器**，用于 **批量管理多个 `ViewTransitionEnd` 组件**。
+
+它主要解决的问题是：当目标视图中有 **多个需要过渡的元素** 时（如图片 + 标题），提供 **统一的动画配置** 和 **批量控制能力**。
+
+---
+
+## 何时使用 ViewTransitionEndGroup？
+
+- 有 **多个 `ViewTransitionEnd`** 需要统一管理
+- 需要 **同时播放/关闭多个元素** 的动画
+- 需要统一配置组内所有元素的 **动画时长、显示模式**
+- 需要在 **所有动画完成后** 执行回调
+- 实现 **详情页、卡片展开** 等多元素协同动画场景
+
+---
+
+## 核心概念
+
+### 1. 分组管理
+
+`ViewTransitionEndGroup` 会自动收集其子树中所有的 `ViewTransitionEnd` 组件，并提供批量操作能力。
+
+### 2. 配置继承
+
+组内的 `ViewTransitionEnd` 会 **继承 Group 的配置**：
+
+```tsx
+// Group 设置的 duration/endDuration 会应用到组内所有 End
+<ViewTransitionEndGroup duration={800} endDuration={600}>
+  <ViewTransitionEnd id="img">...</ViewTransitionEnd>   {/* 使用 800/600 */}
+  <ViewTransitionEnd id="title">...</ViewTransitionEnd> {/* 使用 800/600 */}
+</ViewTransitionEndGroup>
+```
+
+### 3. 批量控制
+
+通过 ref 调用批量方法：
+
+```tsx
+const endGroupRef = useRef<ViewTransitionEndGroupRef>(null)
+
+// 批量显示
+endGroupRef.current?.showAll()
+
+// 批量关闭
+endGroupRef.current?.closeAll()
+```
+
+### 4. 统一回调
+
+`onClosed` 会在 **所有关闭动画完成后** 触发，适合做清理工作：
+
+```tsx
+<ViewTransitionEndGroup onClosed={() => setActiveItem(null)}>
+  ...
+</ViewTransitionEndGroup>
+```
+
+---
+
+## 基础用法
+
+<Canvas of={Stories.Basic} />
+
+---
+
+## Props
+
+<Controls />
+
+---
+
+## Ref Methods
+
+<table>
+  <thead>
+    <tr>
+      <th>方法</th>
+      <th>类型</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>showAll()</code></td>
+      <td><code>() =&gt; void</code></td>
+      <td>批量触发组内所有元素的显示动画</td>
+    </tr>
+    <tr>
+      <td><code>closeAll()</code></td>
+      <td><code>() =&gt; void</code></td>
+      <td>批量触发组内所有元素的关闭动画</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+## 配置示例
+
+### 显示模式
+
+`observe` 模式自动播放，`call` 模式需手动调用 `showAll()`：
+
+<Canvas of={Stories.ShowMode} />
+
+### 自定义动画时长
+
+通过滑块调整 `duration` 和 `endDuration`：
+
+<Canvas of={Stories.Duration} />
+
+---
+
+## 与其他组件的关系
+
+> `ViewTransitionEndGroup` 是 `ViewTransitionEnd` 的「管理容器」，  
+> 通常与 `ViewTransitionStartGroup` **成对使用**。
+
+<table>
+  <thead>
+    <tr>
+      <th>组件</th>
+      <th>角色</th>
+      <th>关系</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>ViewTransitionEnd</code></td>
+      <td>子单元</td>
+      <td>被 Group 收集和管理</td>
+    </tr>
+    <tr>
+      <td><code>ViewTransitionStartGroup</code></td>
+      <td>对应的 Start 管理器</td>
+      <td>Start 侧用 StartGroup，End 侧用 EndGroup</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+## 注意事项
+
+### 与动画容器（如 Modal）配合使用
+
+当 `ViewTransitionEndGroup` 在具有动画效果的容器组件中使用时（如 Modal 蒙层组件），需要特别注意 **动画时长的同步**：
+
+> ⚠️ **关键提示**：容器组件的关闭动画时长（如 Modal 的 `durationOut`）**必须与** `ViewTransitionEndGroup` 的 `endDuration` **保持一致**，否则可能出现以下问题：
+>
+> - 容器先于过渡动画关闭，导致元素 **突然消失**
+> - 过渡动画先于容器结束，导致 **动画中断**
+
+**正确示例**：
+
+```tsx
+const endDuration = 600  // 统一定义时长
+
+<Modal durationOut={endDuration}>  {/* ✅ 与 endDuration 一致 */}
+  <ViewTransitionEndGroup endDuration={endDuration}>
+    ...
+  </ViewTransitionEndGroup>
+</Modal>
+```
+
+**错误示例**：
+
+```tsx
+<Modal durationOut={300}>  {/* ❌ Modal 300ms 关闭，但过渡动画需要 600ms */}
+  <ViewTransitionEndGroup endDuration={600}>
+    ...
+  </ViewTransitionEndGroup>
+</Modal>
+```
+
+### 布局稳定性
+
+为确保动画丝滑，建议：
+
+- 为动画目标元素设置 **固定尺寸** 或使用 **占位容器**
+- 避免动画过程中的 **布局抖动**（Layout Shift）
+- 内容区域使用 **最小高度**（`min-height`）保持结构稳定
+
+---
+
+## 典型使用模式
+
+```tsx
+// Start 侧
+const startGroupRef = useRef<ViewTransitionStartGroupRef>(null)
+
+// End 侧
+const endGroupRef = useRef<ViewTransitionEndGroupRef>(null)
+
+// 打开
+const handleOpen = (item) => {
+  startGroupRef.current?.captureAll()  // 1. 批量捕获起始位置
+  setActiveItem(item)                   // 2. 设置当前项
+  modalRef.current?.show()              // 3. 显示弹窗
+  // observe 模式下，EndGroup 会自动播放显示动画
+}
+
+// 关闭
+const handleClose = () => {
+  modalRef.current?.close()             // 1. 关闭弹窗
+  endGroupRef.current?.closeAll()       // 2. 批量播放关闭动画
+}
+
+// 渲染
+<ViewTransitionStartGroup ref={startGroupRef}>
+  <ViewTransitionStart id={item.id}>
+    <img src={item.src} />
+  </ViewTransitionStart>
+  <ViewTransitionStart id={`title-${item.id}`}>
+    <div>{item.title}</div>
+  </ViewTransitionStart>
+</ViewTransitionStartGroup>
+
+<Modal>
+  <ViewTransitionEndGroup 
+    ref={endGroupRef}
+    duration={800}
+    endDuration={600}
+    onClosed={() => setActiveItem(null)}
+  >
+    <ViewTransitionEnd id={activeItem?.id}>
+      <img src={activeItem?.src} />
+    </ViewTransitionEnd>
+    <ViewTransitionEnd id={`title-${activeItem?.id}`}>
+      <div>{activeItem?.title}</div>
+    </ViewTransitionEnd>
+  </ViewTransitionEndGroup>
+</Modal>
+```
+
+👉 请参考「组合示例」章节了解完整的 StartGroup + EndGroup 协同使用

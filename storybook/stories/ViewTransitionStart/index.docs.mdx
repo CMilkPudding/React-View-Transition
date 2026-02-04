@@ -1,0 +1,143 @@
+import { Meta, Canvas, Story, Controls } from '@storybook/addon-docs/blocks';
+import * as Stories from './index.stories';
+
+<Meta of={Stories} />
+
+# ViewTransitionStart 组件
+
+## 简介
+
+`ViewTransitionStart` 是一个 **视图过渡动画起始位置标记组件**，主要用于 **捕获和记录元素的初始位置信息**。
+
+它通常 **不会单独使用**，而是与 **`ViewTransitionEnd` 组件配合使用**，通过相同的 `id` 建立关联，以实现 **FLIP 动画效果**。
+
+---
+
+## 何时使用 ViewTransitionStart？
+
+- 需要标记一个元素作为过渡动画的 **起点**
+- 需要与 `ViewTransitionEnd` 建立 **位置关联**
+- 需要被 `ViewTransitionStartGroup` **批量管理**
+- 实现图片预览、卡片展开、列表详情等 **过渡动画场景**
+
+---
+
+## 核心概念
+
+### 1. 位置捕获
+
+`ViewTransitionStart` 的核心职责是 **捕获元素的位置信息**（位置、尺寸等），并将其存储起来，供 `ViewTransitionEnd` 计算动画差值。
+
+### 2. 捕获模式 (mode)
+
+<table>
+  <thead>
+    <tr>
+      <th>模式</th>
+      <th>触发时机</th>
+      <th>适用场景</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>click</code></td>
+      <td>点击元素时捕获</td>
+      <td>用户主动交互（默认）</td>
+    </tr>
+    <tr>
+      <td><code>observe</code></td>
+      <td>元素可见时自动捕获</td>
+      <td>列表滚动、懒加载场景</td>
+    </tr>
+  </tbody>
+</table>
+
+> ⚠️ **性能提示**：推荐使用默认的 `click` 模式。`click` 模式仅在用户交互时捕获位置，避免大量自动记录带来的性能开销。**长列表场景不建议使用 `observe` 模式**，因为滚动时会频繁触发位置捕获，可能影响滚动流畅度。
+
+### 3. 与 ViewTransitionEnd 的关系
+
+```
+ViewTransitionStart(id="item-1")  ←──关联──→  ViewTransitionEnd(id="item-1")
+        ↓                                              ↓
+   捕获起始位置                                    计算并播放动画
+```
+
+---
+
+## 基础用法
+
+<Canvas of={Stories.Basic} />
+
+---
+
+## Props
+
+<Controls />
+
+---
+
+## Ref Methods
+
+<table>
+  <thead>
+    <tr>
+      <th>方法</th>
+      <th>类型</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>capture()</code></td>
+      <td><code>() =&gt; void</code></td>
+      <td>手动触发位置捕获</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+## 模式示例
+
+### Observe 模式
+
+当需要在滚动场景中自动捕获位置时使用：
+
+<Canvas of={Stories.ObserveMode} />
+
+### 手动捕获
+
+通过 ref 调用 `capture()` 方法手动触发捕获：
+
+<Canvas of={Stories.ManualCapture} />
+
+---
+
+## 与其他组件的关系
+
+> `ViewTransitionStart` 本身是一个「位置标记单元」，  
+> 实际的动画播放由 `ViewTransitionEnd` 组件负责。
+
+<table>
+  <thead>
+    <tr>
+      <th>组件</th>
+      <th>角色</th>
+      <th>关系</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>ViewTransitionEnd</code></td>
+      <td>动画播放器</td>
+      <td>通过 <code>id</code> 关联，读取 Start 捕获的位置</td>
+    </tr>
+    <tr>
+      <td><code>ViewTransitionStartGroup</code></td>
+      <td>批量管理器</td>
+      <td>统一管理多个 Start 的捕获模式和批量操作</td>
+    </tr>
+  </tbody>
+</table>
+
+👉 请参考「组合示例」章节了解完整的使用流程
