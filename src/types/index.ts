@@ -18,4 +18,4 @@ export type ShowMode = 'observe' | 'call'
 /**
  * ViewTransitionEnd 动画类别
  */
-export type AnimationType = 'all' | 'position' | 'font'
+export type AnimationType = 'all' | 'position' // | 'font'

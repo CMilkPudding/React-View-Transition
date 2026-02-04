@@ -91,7 +91,8 @@ export function play(
     }
   }
 
-  if (animationType === 'all' || animationType == 'font') {
+  // if (animationType === 'all' || animationType == 'font') {
+  if (animationType === 'all') {
     // 文字模式：仅变化字体大小和位置
     const computedStyle = window.getComputedStyle(el)
     const targetFontSize = parseFloat(computedStyle.fontSize)
@@ -100,9 +101,10 @@ export function play(
     targetFontSize && el.style.setProperty("--target-font-size", targetFontSize + 'px');
   }
 
-  const aniName = animationType === 'font'
-    ? (isReverse ? 'text_hide' : 'text-show')
-    : (isReverse ? 'fade_hide' : 'fade_show')
+  // const aniName = animationType === 'font'
+  //   ? (isReverse ? 'text_hide' : 'text-show')
+  //   : (isReverse ? 'fade_hide' : 'fade_show')
+  const aniName = isReverse ? 'fade_hide' : 'fade_show';
   el.style.animation = `${aniName} ${duration}ms forwards`
 
   // 动画结束回调

@@ -1,4 +1,5 @@
 @keyframes fade_show {
+  // 【技巧】0% 第一帧透明度0，用于避免动画开始时的闪烁
   0% {
     width: var(--origin-width);
     height: var(--origin-height);
@@ -6,7 +7,8 @@
     font-size: var(--origin-font-size, inherit);
     opacity: 0;
   }
-
+  
+  // 【技巧】1% 第二帧透明度1，用于避免动画开始时的闪烁
   1% {
     width: var(--origin-width);
     height: var(--origin-height);
@@ -44,13 +46,19 @@
 
 
 @keyframes text_show {
-  from {
+  0% {
     transform: translate(var(--tX), var(--tY));
     font-size: var(--origin-font-size, inherit);
     opacity: 0;
   }
 
-  to {
+  1% {
+    transform: translate(var(--tX), var(--tY));
+    font-size: var(--origin-font-size, inherit);
+    opacity: 1;
+  }
+
+  100% {
     transform: translate(0, 0);
     font-size: var(--target-font-size, inherit);
     opacity: 1;
