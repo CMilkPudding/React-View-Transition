@@ -3,7 +3,7 @@ import { useEffect, useRef, useCallback, Children, isValidElement, cloneElement,
 import { play, DEFAULT_ANIMATE_DURATION } from '../flip'
 import { useViewTransitionEndGroup } from './context'
 import './index.scss'
-import type { ShowMode, AnimationType } from "./types"
+import type { ShowMode, AnimationType } from "../types"
 
 const DEFAULT_SHOW_MODE : ShowMode = 'observe'
 

@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import type { ShowMode } from 'src/types'
+import type { ShowMode } from '../types'
 
 export interface CloseAnimationItem {
   /** 获取元素当前位置 */
